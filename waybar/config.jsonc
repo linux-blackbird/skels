@@ -274,7 +274,7 @@
 		"menu-file": "$HOME/.config/waybar/power-menu.xml", // Menu file in resources folder
 		"menu-actions": {
             "logout": "uwsm stop",
-			"shutdown": "shutdown",
+			"shutdown": "poweroff",
 			"reboot": "reboot",
 			"suspend": "systemctl suspend",
 			"hibernate": "systemctl hibernate"

@@ -1,13 +1,15 @@
-*.tar
-*.tar.*
-*.jar
-*.exe
-*.msi
-*.zip
-*.tgz
-*.log
-*.log.*
-*.sig
+## ignore local config
 
-pkg/
-src/
+Code/
+dconf/
+go/
+google-chrome/
+keepassxc/
+nautilus/
+pulse/
+systemd/
+xfce4/
+yay/
+pavucontrol.ini
+user-dirs.dirs
+user-dirs.locale
