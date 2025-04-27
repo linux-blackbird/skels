@@ -234,7 +234,7 @@
     "custom/vscode": {
         "format": "{icon}",
         "format-icons": "\ue8da",
-        "on-click": "uwsm app -- code --password-store='gnome-libsecret'",
+        "on-click": "uwsm app -- code --no-sandbox --password-store='gnome-libsecret'",
         "tooltip-format": "Code Editor"
     },
     "custom/mpdlist": {
