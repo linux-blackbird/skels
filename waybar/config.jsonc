@@ -204,7 +204,7 @@
     "custom/mynote": {
         "format": "{icon}",
         "format-icons": "\udb85\udf8e",
-        "on-click": "uwsm app -- flatpak run com.github.marktext.marktext",
+        "on-click": "uwsm app -- obsidian",
         "tooltip-format": "Note taking"
     },
     "custom/mailer": {
@@ -234,7 +234,11 @@
     "custom/vscode": {
         "format": "{icon}",
         "format-icons": "\ue8da",
+<<<<<<< HEAD
         "on-click": "uwsm app -- code --no-sandbox --password-store='gnome-libsecret'",
+=======
+        "on-click": "uwsm app -- code  --no-sandbox --password-store='gnome-libsecret'",
+>>>>>>> 16af7cc6d9f79de1c7816fecef6cf8329f626c83
         "tooltip-format": "Code Editor"
     },
     "custom/mpdlist": {
