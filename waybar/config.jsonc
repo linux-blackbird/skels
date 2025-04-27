@@ -204,7 +204,7 @@
     "custom/mynote": {
         "format": "{icon}",
         "format-icons": "\udb85\udf8e",
-        "on-click": "uwsm app -- flatpak run com.github.marktext.marktext",
+        "on-click": "uwsm app -- obsidian",
         "tooltip-format": "Note taking"
     },
     "custom/mailer": {
