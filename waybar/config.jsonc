@@ -126,7 +126,7 @@
         "tooltip": false
     },
     "memory": {
-        "format": "{}% \uefc5"
+        "format": "{}% \udb81\udcc5"
     },
     "temperature": {
         // "thermal-zone": 2,
