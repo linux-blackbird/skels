@@ -3,12 +3,12 @@
       xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
       xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
 >
-  <bookmark href="sftp://lektor@server1/" added="2025-05-10T15:56:21.698628Z" modified="2025-05-10T15:56:21.698630Z" visited="2025-05-10T15:56:21.698629Z">
-    <title>/ on server1</title>
+  <bookmark href="sftp://root@10.10.1.238/" added="2025-05-11T07:57:40.398805Z" modified="2025-05-11T07:57:40.398807Z" visited="2025-05-11T07:57:40.398805Z">
+    <title>/ on 10.10.1.238</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <bookmark:applications>
-          <bookmark:application name="org.gnome.Nautilus" exec="&apos;org.gnome.Nautilus %u&apos;" modified="2025-05-10T15:56:21.698629Z" count="1"/>
+          <bookmark:application name="org.gnome.Nautilus" exec="&apos;org.gnome.Nautilus %u&apos;" modified="2025-05-11T07:57:40.398806Z" count="1"/>
         </bookmark:applications>
       </metadata>
     </info>
