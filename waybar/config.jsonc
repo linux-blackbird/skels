@@ -12,7 +12,8 @@
         //"custom/myterm",
         "custom/mynote",
         "custom/mailer",
-        // "custom/fileman",
+        "custom/software",
+        "custom/fileman",
         "custom/vscode",
         "custom/firefox",
         "custom/chrome"
@@ -212,6 +213,12 @@
         "format-icons": "\udb80\uddee",
         "on-click": "uwsm app -- evolution",
         "tooltip-format": "Email Client"
+    },
+    "custom/software": {
+        "format": "{icon}",
+        "format-icons": "\uf0be",
+        "on-click": "uwsm app -- gnome-software",
+        "tooltip-format": "Software Centere"
     },
     "custom/fileman": {
         "format": "{icon}",
