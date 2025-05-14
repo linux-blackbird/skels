@@ -66,26 +66,32 @@ function prepar_luks() {
 
 function parted_root() {
 
-    yes | pvcreate /dev/mapper/lvm_root &&
-    sleep 3
-    yes | vgcreate proc /dev/mapper/lvm_root &&
-    sleep 3
-    yes | lvcreate -L $LVMPROOT proc -n root &&
-    sleep 3
-    yes | lvcreate -L $LVMPVARS proc -n vars &&
-    sleep 3
-    yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
-    sleep 3
-    yes | lvcreate -L $LVMPVTMP proc -n vlog &&
-    sleep 3
-    yes | lvcreate -L $LVMPVAUD proc -n vaud &&
-    sleep 3
-    yes | lvcreate -l 100%FREE proc -n swap
-    sleep 3
+    if [[ ! -e /dev/mapper/lvm_root  ]];then
+        yes | pvcreate /dev/mapper/lvm_root &&
+        sleep 2
+        yes | vgcreate proc /dev/mapper/lvm_root &&
+        sleep 2
+        yes | lvcreate -L $LVMPROOT proc -n root &&
+        sleep 2
+        yes | lvcreate -L $LVMPVARS proc -n vars &&
+        sleep 2
+        yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
+        sleep 2
+        yes | lvcreate -L $LVMPVTMP proc -n vlog &&
+        sleep 2
+        yes | lvcreate -L $LVMPVAUD proc -n vaud &&
+        sleep 2
+        yes | lvcreate -l100%FREE proc -n swap
+        sleep 2
+    fi
 }
 
 
 function parted_data() {
+
+    if [[ -e /dev/mapper/lvm_data  ]];then
+        return
+    fi
 
     if [[ $PROCEDUR == 'install' ]];then
 
