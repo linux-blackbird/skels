@@ -242,7 +242,7 @@ function migrat_envi() {
     mkdir /mnt/install
     chmod +x /root/conf/post.sh
     cp /root/conf/post.sh /mnt/install
-    cp /root/conf/users/$1 /mnt/install/userenv 
+    cp /root/conf/users/$USERNAME /mnt/install/userenv 
     cp /root/conf/protocol/$PROTOCOL /mnt/install/protcolenv
     cp -fr /root/conf/config/$PROTOCOL/* /mnt
 }
@@ -256,7 +256,7 @@ function instal_prep() {
     mounts_disk &&
     deploy_base &&
     migrat_envi &&
-    arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'    
+    arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh'    
 }
 
 instal_prep;
