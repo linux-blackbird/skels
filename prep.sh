@@ -192,9 +192,10 @@ function migrat_envi() {
 function instal_prep() {
 
     prepar_luks &&
+    parted_root &&
     parted_data &&
-    parted_disk &&
-    format_disk 
+    format_disk &&
+    mounts_disk &&
 
     if [ deploy_base ];then
         deploy_conf &&
