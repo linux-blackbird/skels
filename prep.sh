@@ -51,14 +51,16 @@ function prepar_luks() {
         sleep 2
     else
 
-        cryptsetup luksOpen $DISKROOT lvm_root
-        sleep 5
+        if [[ ! -e /dev/mapper/lvm_root  ]];then
+            cryptsetup luksOpen $DISKROOT lvm_root
+            sleep 5
+        fi
 
-        cryptsetup luksOpen $DISKDATA lvm_data
-        sleep 5
+        if [[ ! -e /dev/mapper/lvm_data  ]];then
+            cryptsetup luksOpen $DISKDATA lvm_data
+            sleep 5
+        fi
     fi
-
-    
 }
 
 
