@@ -229,7 +229,7 @@ function instal_prep() {
             create_envi &&
             arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'
         fi
-    if
+    fi
     
 }
 
