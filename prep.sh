@@ -29,8 +29,8 @@ fi
 
 
 ## load source
-source users/$USERNAME
-source protocol/$PROTOCOL
+source $(pwd)/users/$USERNAME
+source $(pwd/)/protocol/$PROTOCOL
 
 
 
