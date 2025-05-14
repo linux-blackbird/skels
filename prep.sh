@@ -42,13 +42,19 @@ function prepar_luks() {
         cryptsetup luksFormat $DISKVAUL &&
         sleep 2
         
-        cryptsetup luksFormat $DISKROOT &&
-        cryptsetup luksOpen $DISKROOT lvm_root
-        sleep 2
+
+        if [[ ! -e /dev/mapper/lvm_root  ]];then
+            cryptsetup luksFormat $DISKROOT &&
+            cryptsetup luksOpen $DISKROOT lvm_root
+            sleep 2
+        fi
         
-        cryptsetup luksFormat $DISKDATA
-        cryptsetup luksOpen $DISKDATA lvm_data
-        sleep 2
+        if [[ ! -e /dev/mapper/lvm_data  ]];then
+            cryptsetup luksFormat $DISKDATA
+            cryptsetup luksOpen $DISKDATA lvm_data
+            sleep 2
+        fi
+        
     else
 
         if [[ ! -e /dev/mapper/lvm_root  ]];then
