@@ -54,7 +54,7 @@ function prepar_luks() {
             cryptsetup luksOpen $DISKDATA lvm_data
             sleep 2
         fi
-        
+
     else
 
         if [[ ! -e /dev/mapper/lvm_root  ]];then
@@ -105,15 +105,21 @@ function parted_data() {
         vgcreate data /dev/mapper/lvm_data
 
         if [[ ! -z $LVMDHOME ]];then
-            yes | lvcreate -L $LVMDHOME data -n home
+            if [[ ! -e /dev/data/home  ]];then
+                yes | lvcreate -L $LVMDHOME data -n home
+            fi
         fi
 
         if [[ ! -z $LVMDPODS ]];then
-            yes | lvcreate -L $LVMDPODS data -n pods
+            if [[ ! -e /dev/data/pods  ]];then
+                yes | lvcreate -L $LVMDPODS data -n pods
+            fi
         fi
 
         if [[ ! -z $LVMDHOST ]];then
-            yes | lvcreate -l $LVMDHOST data -n host
+            if [[ ! -e /dev/data/host  ]];then
+                yes | lvcreate -l $LVMDHOST data -n host
+            fi
         fi
     fi
 }
@@ -214,14 +220,17 @@ function instal_prep() {
     prepar_luks &&
     parted_root &&
     parted_data &&
-    format_disk &&
-    mounts_disk &&
+    if [ format_disk ];then
 
-    if [ deploy_base ];then
-        deploy_conf &&
-        create_envi &&
-        arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'
-    fi
+        mounts_disk &&
+
+        if [ deploy_base ];then
+            deploy_conf &&
+            create_envi &&
+            arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'
+        fi
+    if
+    
 }
 
 instal_prep;
