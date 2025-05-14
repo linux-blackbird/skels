@@ -8,7 +8,7 @@ fi
 
 echo $1
 
-if [ ! -e /conf/users/$1 ];then
+if [ ! -e /root/conf/users/$1 ];then
     echo 'error : your account is suspended or never exist';
     exit 1;
 fi
@@ -29,8 +29,8 @@ fi
 
 
 ## load source
-source $(pwd)/users/$USERNAME
-source $(pwd/)/protocol/$PROTOCOL
+source /root/users/$USERNAME
+source /root/protocol/$PROTOCOL
 
 
 
