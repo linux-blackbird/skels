@@ -1,12 +1,12 @@
 #!/bin/bash
 
 ## parameter check
-if [[ -z $1 ]];then
+if [[ -z $0 ]];then
     echo 'error : user name paramter is empty';
     exit 1;  
 fi
 
-if [[ ! -d users/$1 ]];then
+if [[ ! -d users/$0 ]];then
     echo 'error : your account is suspended or never exist';
     exit 1;
 fi
@@ -14,7 +14,7 @@ fi
 
 
 ## variable
-USERNAME=$1
+USERNAME=$0
 PROCEDUR="reset"
 PACKBASE="base base-devel neovim git openssh polkit xfsprogs lvm2 less"
 
