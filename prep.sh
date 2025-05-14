@@ -39,22 +39,28 @@ function prepar_luks() {
 
     if [[ $PROCEDUR == "install" ]];then
         
-        yes Y | cryptsetup luksFormat $DISKVAUL &&
+        cryptsetup luksFormat $DISKVAUL &&
         sleep 5
         
-        yes Y | cryptsetup luksFormat $DISKROOT &&
+        cryptsetup luksFormat $DISKROOT &&
+        sleep 2
+        cryptsetup luksOpen $DISKROOT lvm_root
         sleep 5
         
-        yes Y | cryptsetup luksFormat $DISKDATA
+        cryptsetup luksFormat $DISKDATA
+        sleep 2
+        cryptsetup luksOpen $DISKDATA lvm_data
+        sleep 5
+    else
+
+        cryptsetup luksOpen $DISKROOT lvm_root
         sleep 5
 
+        cryptsetup luksOpen $DISKDATA lvm_data
+        sleep 5
     fi
 
-    cryptsetup luksOpen $DISKROOT lvm_root
-    sleep 5
-
-    cryptsetup luksOpen $DISKDATA lvm_data
-    sleep 5
+    
 }
 
 
