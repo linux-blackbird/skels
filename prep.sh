@@ -255,7 +255,6 @@ function instal_prep() {
     format_disk &&
     mounts_disk &&
     deploy_base &&
-    deploy_conf &&
     migrat_envi &&
     arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'    
 }
