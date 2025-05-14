@@ -16,7 +16,7 @@ fi
 
 
 ## variable
-USERNAME=$0
+USERNAME=$1
 PROCEDUR="reset"
 PACKBASE="base base-devel neovim git openssh polkit xfsprogs lvm2 less"
 
@@ -29,15 +29,15 @@ fi
 
 
 ## load source
-source /root/users/$USERNAME
-source /root/protocol/$PROTOCOL
+source /root/conf/users/$USERNAME
+source /root/conf/protocol/$PROTOCOL
 
 
 
 ## begin operation
 function prepar_luks() {
 
-    if [[ $PROCEDUR == "swipe" ]];then
+    if [[ $PROCEDUR == "install" ]];then
         
         yes Y | cryptsetup luksFormat $DISKVAUL &&
         sleep 5
@@ -81,7 +81,7 @@ function parted_root() {
 
 function parted_data() {
 
-    if [[ $PROCEDUR == 'swipe' ]];then
+    if [[ $PROCEDUR == 'install' ]];then
 
         pvcreate /dev/mapper/lvm_data
         vgcreate data /dev/mapper/lvm_data
@@ -103,7 +103,7 @@ function parted_data() {
 
 function format_disk() {
 
-    if [[ $PROCEDUR == 'swipe' ]];then
+    if [[ $PROCEDUR == 'install' ]];then
         yes | mkfs.vfat -F32 -S 4096 -n BOOT $DISKBOOT &&
         yes | mkfs.ext4 -b 4096 /dev/data/home &&
         mkfs.xfs -fs size=4096 /dev/data/pods &&
