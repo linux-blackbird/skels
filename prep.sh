@@ -216,21 +216,15 @@ function migrat_envi() {
 
 
 function instal_prep() {
-
     prepar_luks &&
     parted_root &&
-    parted_data &&
-    if [ format_disk ];then
-
-        mounts_disk &&
-
-        if [ deploy_base ];then
-            deploy_conf &&
-            create_envi &&
-            arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'
-        fi
-    fi
-    
+    parted_data && 
+    format_disk &&
+    mounts_disk &&
+    deploy_base &&
+    deploy_conf &&
+    create_envi &&
+    arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'    
 }
 
 instal_prep;
