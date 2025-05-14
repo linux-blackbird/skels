@@ -203,4 +203,4 @@ function instal_prep() {
     fi
 }
 
-#instal_prep;
+instal_prep;
