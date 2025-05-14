@@ -1,88 +1,119 @@
 #!/bin/bash
 
-PROTOCOL=$1 
-PROCEDUR=$2     #reset or swipe#
-DISKBOOT='/dev/nvme0n1p1'
-DISKVAUL='/dev/nvme0n1p2'
-DISKROOT='/dev/nvme0n1p3'
-DISKDATA='/dev/nvme0n1p4'
-PACKADMR=""
-PACKCNTR=""
+## parameter check
+if [[ -z $1 ]];then
+    echo 'error : user name paramter is empty';
+    exit 1;  
+fi
+
+if [[ ! -f users/$1 ]];then
+    echo 'error : your account is suspended or never exist';
+    exit 1;
+fi
 
 
-function format_luks() {
-    if [[ $PROCEDUR === 'swipe' ]];then
-        cryptsetup luksFormat /dev/nvme0n1p2 &&
-        cryptsetup luksFormat /dev/nvme0n1p3 &&
-        cryptsetup luksFormat /dev/nvme0n1p4
-    fi
-}
+
+## variable
+USERNAME=$1
+PROCEDUR="reset"
+PACKBASE="base base-devel neovim git openssh polkit xfsprogs lvm2 less"
 
 
-function opened_luks() {
-    if [[ $PROCEDUR === 'reset' ]];then
-        cryptsetup luksOpen /dev/nvme0n1p3 lvm_root &&
-        cryptsetup luksOpen /dev/nvme0n1p4 lvm_data
-    fi
-}
+
+if [[ ! -z $2 ]];then
+    PROCEDUR=$2  #install | reset
+fi
 
 
-function parted_root_admiral() {
-    pvcreate /dev/mapper/lvm_root &&
-    vgcreate proc /dev/mapper/lvm_root &&
-    lvcreate -L 15G  proc -n root &&
-    lvcreate -L 10G  proc -n vars &&
-    lvcreate -L 1G   proc -n vtmp &&
-    lvcreate -L 2.5G proc -n root &&
-    lvcreate -L 1.5G proc -n root &&
-    lvcreate -l 100%FREE proc -n swap
-}
+
+## load source
+source users/$USERNAME
+source protocol/$PROTOCOL
 
 
-function parted_data_admiral() {
-    pvcreate /dev/mapper/lvm_data
-    vgcreate data /dev/mapper/lvm_data
-    lvcreate -L 100G data -n home
-    lvcreate -L 30G data -n pods
-    lvcreate -l 100%FREE data -n host
-}
 
+## begin operation
+function prepar_luks() {
 
-function parted_data_control() {
-    pvcreate /dev/mapper/lvm_data
-    vgcreate data /dev/mapper/lvm_data
-    lvcreate -L 600G data -n home
-    lvcreate -L 100G data -n pods
-    lvcreate -l 100%FREE data -n host
-}
+    if [[ $PROCEDUR == "swipe" ]];then
+        
+        yes Y | cryptsetup luksFormat $DISKVAUL &&
+        sleep 5
+        
+        yes Y | cryptsetup luksFormat $DISKROOT &&
+        sleep 5
+        
+        yes Y | cryptsetup luksFormat $DISKDATA
+        sleep 5
 
-
-function parted_disk() {
-
-    if [[ $PROTOCOL === 'admiral' ]];then
-        echo 'format root admiral'
-        echo 'format data admiral'
     fi
 
-    if [[ $PROTOCOL === 'control' ]];then
-        echo 'format root control'
-        echo 'format data control'
+    cryptsetup luksOpen $DISKROOT lvm_root
+    sleep 5
+
+    cryptsetup luksOpen $DISKDATA lvm_data
+    sleep 5
+}
+
+
+function parted_root() {
+
+    yes | pvcreate /dev/mapper/lvm_root &&
+    sleep 3
+    yes | vgcreate proc /dev/mapper/lvm_root &&
+    sleep 3
+    yes | lvcreate -L $LVMPROOT proc -n root &&
+    sleep 3
+    yes | lvcreate -L $LVMPVARS proc -n vars &&
+    sleep 3
+    yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
+    sleep 3
+    yes | lvcreate -L $LVMPVTMP proc -n vlog &&
+    sleep 3
+    yes | lvcreate -L $LVMPVAUD proc -n vaud &&
+    sleep 3
+    yes | lvcreate -l 100%FREE proc -n swap
+    sleep 3
+}
+
+
+function parted_data() {
+
+    if [[ $PROCEDUR == 'swipe' ]];then
+
+        pvcreate /dev/mapper/lvm_data
+        vgcreate data /dev/mapper/lvm_data
+
+        if [[ ! -z $LVMDHOME ]];then
+            yes | lvcreate -L $LVMDHOME data -n home
+        fi
+
+        if [[ ! -z $LVMDPODS ]];then
+            yes | lvcreate -L $LVMDPODS data -n pods
+        fi
+
+        if [[ ! -z $LVMDPODS ]];then
+            yes | lvcreate -l $LVMDHOST data -n host
+        fi
     fi
 }
 
 
 function format_disk() {
 
-    yes | mkfs.vfat -F32 -S 4096 -n BOOT /dev/nvme0n1p1
-    yes | mkfs.ext4 -b 4096 /dev/proc/root
-    yes | mkfs.ext4 -b 4096 /dev/proc/vars
-    yes | mkfs.ext4 -b 4096 /dev/proc/vtmp
-    yes | mkfs.ext4 -b 4096 /dev/proc/vlog
-    yes | mkfs.ext4 -b 4096 /dev/proc/vaud
-    yes | mkswap /dev/proc/swap
-    yes | mkfs.ext4 -b 4096 /dev/data/home
-    mkfs.xfs -fs size=4096 /dev/data/pods
-    mkfs.xfs -fs size=4096 /dev/data/host
+    if [[ $PROCEDUR == 'swipe' ]];then
+        yes | mkfs.vfat -F32 -S 4096 -n BOOT $DISKBOOT &&
+        yes | mkfs.ext4 -b 4096 /dev/data/home &&
+        mkfs.xfs -fs size=4096 /dev/data/pods &&
+        mkfs.xfs -fs size=4096 /dev/data/host
+    fi
+
+    yes | mkfs.ext4 -b 4096 /dev/proc/root &&
+    yes | mkfs.ext4 -b 4096 /dev/proc/vars &&
+    yes | mkfs.ext4 -b 4096 /dev/proc/vtmp &&
+    yes | mkfs.ext4 -b 4096 /dev/proc/vlog &&
+    yes | mkfs.ext4 -b 4096 /dev/proc/vaud &&
+    yes | mkswap /dev/proc/swap 
 }
 
 
@@ -90,78 +121,86 @@ function mounts_disk() {
 
     ## root mounting
     mount /dev/proc/root /mnt &&
+    sleep 1
 
     ## boot mounting
-    mkdir /mnt/boot
-    mount -o uid=0,gid=0,fmask=0077,dmask=0077 /dev/nvme0n1p1 /mnt/boot
+    mkdir /mnt/boot &&
+    mount -o uid=0,gid=0,fmask=0077,dmask=0077 /dev/nvme0n1p1 /mnt/boot &&
+    sleep 1
 
     ## vars mounting
-    mkdir /mnt/var
-    mount /dev/proc/vars /mnt/var
+    mkdir /mnt/var &&
+    mount /dev/proc/vars /mnt/var &&
+    sleep 1
 
     ## vtmp mounting
-    mkdir /mnt/var/tmp
-    mount /dev/proc/vtmp /mnt/var/tmp
+    mkdir /mnt/var/tmp &&
+    mount /dev/proc/vtmp /mnt/var/tmp &&
+    sleep 1
 
     ## vlog mounting
-    mkdir /mnt/var/log
-    mount /dev/proc/vlog /mnt/var/log
+    mkdir /mnt/var/log &&
+    mount /dev/proc/vlog /mnt/var/log &&
+    sleep 1
 
     ## vaud mounting
-    mkdir /mnt/var/log/audit
-    mount /dev/proc/vaud /mnt/var/log/audit
+    mkdir /mnt/var/log/audit &&
+    mount /dev/proc/vaud /mnt/var/log/audit &&
+    sleep 1
 
     ## home mounting
-    mkdir /mnt/home
-    mount /dev/data/home /mnt/home
-
+    mkdir /mnt/home &&
+    mount /dev/data/home /mnt/home &&
+    sleep 1
+ 
     ## pods mounting
-    mkdir /mnt/var/lib /mnt/var/lib/libvirt /mnt/var/lib/libvirt/images
-    mount /dev/data/host /mnt/var/lib/libvirt/images
+    mkdir /mnt/var/lib /mnt/var/lib/libvirt /mnt/var/lib/libvirt/images &&
+    mount /dev/data/host /mnt/var/lib/libvirt/images &&
+    sleep 1
 
     ## host mounting
-    mkdir /mnt/var/lib/containers
-    mount /dev/data/pods /mnt/var/lib/containers
+    mkdir /mnt/var/lib/containers &&
+    mount /dev/data/pods /mnt/var/lib/containers &&
+    sleep 1
 
     ## swap mounting
     swapon /dev/proc/swap
+    sleep 1
 }
 
 
 function deploy_base() {
-    pacstrap /mnt base base-devel neovim git openssh polkit xfsprogs lvm2 less 
-    cp /etc/systemd/network/* /mnt/etc/systemd/network/
-    genfstab -U /mnt > /mnt/etc/fstab
-    echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/etc/fstab
+
+    if [ pacstrap /mnt $PACKBASE ];then
+        genfstab -U /mnt > /mnt/etc/fstab 
+        cp /etc/systemd/network/* /mnt/etc/systemd/network/
+        echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/etc/fstab
+    fi
 }
 
 
-function deploy_conf() {
-
-    git clone https://github.com/linux-blackbird/conf /deploy
-
-    if [[ $PROTOCOL == 'admiral' ]];then
-        cp -f /deploy/admiral/* /mnt/
-    fi
-
-    if [[ $PROTOCOL == 'control' ]];then
-        cp -f /deploy/control/* /mnt/
-    fi
-
-    cp /deploy/post.sh /mnt
+function migrat_envi() {
+    mkdir /mnt/install
+    chmod +x post.sh
+    cp post.sh /mnt/install
+    cp users/$1 /mnt/install/userenv 
+    cp protocol/$PROTOCOL /mnt/install/protcolenv
+    cp -fr config/$PROTOCOL/* /mnt
 }
 
 
-function blackbird_prep() {
-    format_luks &&
-    opened_luks &&
+function instal_prep() {
+
+    prepar_luks &&
     parted_data &&
     parted_disk &&
-    format_disk &&
-    deploy_base &&
-    deploy_conf &&
-    arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'
+    format_disk 
+
+    if [ deploy_base ];then
+        deploy_conf &&
+        create_envi &&
+        arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'
+    fi
 }
 
-
-blackbird_prep;
+#instal_prep;

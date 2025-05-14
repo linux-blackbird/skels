@@ -1,0 +1,8 @@
+MAKEUSER="kamil"
+PROTOCOL="admiral"
+NETSIPV4="10.10.2.2/24"
+NETSGATE="10.10.2.1"
+NETSDNSS="10.10.2.1"
+USERPACK="support"
+TIMEZONE="/Asia/Jakarta"
+HOSTNAME="sandayu.lan"
