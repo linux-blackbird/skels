@@ -6,7 +6,7 @@ if [[ -z $1 ]];then
     exit 1;  
 fi
 
-if [[ ! -f users/$1 ]];then
+if [[ ! -d users/$1 ]];then
     echo 'error : your account is suspended or never exist';
     exit 1;
 fi
