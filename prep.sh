@@ -106,7 +106,7 @@ function parted_data() {
             yes | lvcreate -L $LVMDPODS data -n pods
         fi
 
-        if [[ ! -z $LVMDPODS ]];then
+        if [[ ! -z $LVMDHOST ]];then
             yes | lvcreate -l $LVMDHOST data -n host
         fi
     fi
@@ -139,7 +139,7 @@ function mounts_disk() {
 
     ## boot mounting
     mkdir /mnt/boot &&
-    mount -o uid=0,gid=0,fmask=0077,dmask=0077 /dev/nvme0n1p1 /mnt/boot &&
+    mount -o uid=0,gid=0,fmask=0077,dmask=0077 $DISKBOOT /mnt/boot &&
     sleep 1
 
     ## vars mounting
