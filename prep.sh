@@ -241,10 +241,10 @@ function deploy_base() {
 function migrat_envi() {
     mkdir /mnt/install
     chmod +x /root/conf/post.sh
-    cp post.sh /mnt/install
-    cp users/$1 /mnt/install/userenv 
-    cp protocol/$PROTOCOL /mnt/install/protcolenv
-    cp -fr config/$PROTOCOL/* /mnt
+    cp /root/conf/post.sh /mnt/install
+    cp /root/conf/users/$1 /mnt/install/userenv 
+    cp /root/conf/protocol/$PROTOCOL /mnt/install/protcolenv
+    cp -fr /root/conf/config/$PROTOCOL/* /mnt
 }
 
 
