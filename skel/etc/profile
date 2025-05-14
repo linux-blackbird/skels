@@ -76,3 +76,13 @@ function update() {
     pacman -Syu &&
     pacman -Scc
 }
+
+
+function gc() {
+    git clone $1
+}
+
+
+function gp() {
+    git pull
+}

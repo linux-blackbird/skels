@@ -1,10 +1,11 @@
 ## ignore local config
-
+evolution/
 git/
 Code/
 dconf/
 go/
 gtk-4.0/
+Podman\ Desktop/
 google-chrome/
 keepassxc/
 nautilus/

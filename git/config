@@ -1,7 +1,0 @@
-[user]
-	name = almuhdilkarim
-	email = almuhdilkarim2@gmail.com
-[core]
-	editor = neovim
-[credential]
-	helper = /usr/lib/git-core/git-credential-libsecret
