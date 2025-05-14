@@ -6,7 +6,9 @@ if [[ -z $0 ]];then
     exit 1;  
 fi
 
-if [[ ! -d users/$0 ]];then
+
+
+if [[ ! -d "$(pwd)/users/$0" ]];then
     echo 'error : your account is suspended or never exist';
     exit 1;
 fi
