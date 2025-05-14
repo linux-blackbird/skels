@@ -1,0 +1,8 @@
+MAKEUSER="testing"
+PROTOCOL="admiral"
+NETSIPV4="10.10.1.150/24"
+NETSGATE="10.10.1.1"
+NETSDNSS="10.10.1.1"
+USERPACK="development"
+TIMEZONE="/Asia/Jakarta"
+HOSTNAME="testing.lan"
