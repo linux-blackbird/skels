@@ -171,61 +171,70 @@ function mounts_disk() {
 
     ## root mounting
     mount /dev/proc/root /mnt &&
+    echo 'mount root'
     sleep 1
 
     ## boot mounting
     mkdir /mnt/boot &&
     mount -o uid=0,gid=0,fmask=0077,dmask=0077 $DISKBOOT /mnt/boot &&
+    echo 'mount boot'
     sleep 1
 
     ## vars mounting
     mkdir /mnt/var &&
     mount /dev/proc/vars /mnt/var &&
+    echo 'mount vars'
     sleep 1
 
     ## vtmp mounting
     mkdir /mnt/var/tmp &&
     mount /dev/proc/vtmp /mnt/var/tmp &&
+    echo 'mount vtmp'
     sleep 1
 
     ## vlog mounting
     mkdir /mnt/var/log &&
     mount /dev/proc/vlog /mnt/var/log &&
+    echo 'mount vlog'
     sleep 1
 
     ## vaud mounting
     mkdir /mnt/var/log/audit &&
     mount /dev/proc/vaud /mnt/var/log/audit &&
+    echo 'mount vaud'
     sleep 1
 
     ## home mounting
     mkdir /mnt/home &&
     mount /dev/data/home /mnt/home &&
+    echo 'mount home'
     sleep 1
  
     ## pods mounting
     mkdir /mnt/var/lib /mnt/var/lib/libvirt /mnt/var/lib/libvirt/images &&
     mount /dev/data/host /mnt/var/lib/libvirt/images &&
+    echo 'mount pods'
     sleep 1
 
     ## host mounting
     mkdir /mnt/var/lib/containers &&
     mount /dev/data/pods /mnt/var/lib/containers &&
+    echo 'mount host'
     sleep 1
 
     ## swap mounting
     swapon /dev/proc/swap
+    echo 'mount swap'
     sleep 1
 }
 
 
 function deploy_base() {
 
-    if [ pacstrap /mnt $PACKBASE ];then
-        genfstab -U /mnt > /mnt/etc/fstab 
-        cp /etc/systemd/network/* /mnt/etc/systemd/network/
-        echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/etc/fstab
-    fi
+    pacstrap /mnt $PACKBASE
+    genfstab -U /mnt > /mnt/etc/fstab 
+    cp /etc/systemd/network/* /mnt/etc/systemd/network/
+    echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/etc/fstab
 }
 
 
@@ -247,7 +256,7 @@ function instal_prep() {
     mounts_disk &&
     deploy_base &&
     deploy_conf &&
-    create_envi &&
+    migrat_envi &&
     arch-chroot /mnt /bin/sh -c '/bin/sh post.sh'    
 }
 
