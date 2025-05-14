@@ -1,14 +1,13 @@
 #!/bin/bash
 
 ## parameter check
-if [[ -z $0 ]];then
+if [[ -z $1 ]];then
     echo 'error : user name paramter is empty';
     exit 1;  
 fi
 
 
-
-if [[ ! -e "$(pwd)/users/$0" ]];then
+if [ ! -e /users/$1 ];then
     echo 'error : your account is suspended or never exist';
     exit 1;
 fi
