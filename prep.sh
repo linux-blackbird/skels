@@ -73,37 +73,61 @@ function prepar_luks() {
 function parted_root() {
 
     if [[ ! -e /dev/mapper/lvm_root  ]];then
-        yes | pvcreate /dev/mapper/lvm_root &&
-        sleep 2
-        yes | vgcreate proc /dev/mapper/lvm_root &&
-        sleep 2
-        yes | lvcreate -L $LVMPROOT proc -n root &&
-        sleep 2
-        yes | lvcreate -L $LVMPVARS proc -n vars &&
-        sleep 2
-        yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
-        sleep 2
-        yes | lvcreate -L $LVMPVTMP proc -n vlog &&
-        sleep 2
-        yes | lvcreate -L $LVMPVAUD proc -n vaud &&
-        sleep 2
-        yes | lvcreate -l100%FREE proc -n swap
-        sleep 2
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | pvcreate /dev/mapper/lvm_root &&
+            sleep 2
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | vgcreate proc /dev/mapper/lvm_root &&
+            sleep 2
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -L $LVMPROOT proc -n root &&
+            sleep 2
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -L $LVMPVARS proc -n vars &&
+            sleep 2
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
+            sleep 2
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -L $LVMPVTMP proc -n vlog &&
+            sleep 2
+        fi 
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -L $LVMPVAUD proc -n vaud &&
+            sleep 2
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -l100%FREE proc -n swap
+            sleep 2
+        fi
     fi
 }
 
 
 function parted_data() {
 
-    if [[ -e /dev/mapper/lvm_data  ]];then
-        return
-    fi
 
     if [[ $PROCEDUR == 'install' ]];then
 
-        pvcreate /dev/mapper/lvm_data
-        vgcreate data /dev/mapper/lvm_data
+        if [[ ! -e /dev/mapper/lvm_data  ]];then
+            pvcreate /dev/mapper/lvm_data
+            vgcreate data /dev/mapper/lvm_data
+        fi
 
+       
         if [[ ! -z $LVMDHOME ]];then
             if [[ ! -e /dev/data/home  ]];then
                 yes | lvcreate -L $LVMDHOME data -n home
