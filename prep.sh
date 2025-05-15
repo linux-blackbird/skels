@@ -356,7 +356,6 @@ function basics_init() {
 
     ## prepare protocol env
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
-    cat /mnt/install/setup/protocol.sh &&
     sleep 2
 
 
@@ -392,7 +391,7 @@ function instal_main() {
     mounts_disk &&
     deploy_base &&
     basics_init &&
-    migrat_prot 
+    protoc_init 
 }
 
 
