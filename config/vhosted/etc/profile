@@ -76,22 +76,3 @@ function update() {
     pacman -Syu &&
     pacman -Scc
 }
-
-function gc() {
-    git clone $1
-}
-
-function gp() {
-    git pull
-}
-
-function pgk() {
-    reflector --save /etc/pacman.d/mirrorlist --counrty Indonesia,Singapore --protocol https --latest 5 &&
-    pacman -S $1
-}
-
-
-function crypter() {
-    cryptsetup luksOpen /dev/nvme0n1p2 keys &&
-    mount /dev/mapper/key /mnt 
-}
