@@ -346,7 +346,7 @@ function deploy_base() {
 }
 
 
-function migrat_envi() {
+function migrat_base() {
 
     ## prepare post installation
     mkdir /mnt/install/setup
@@ -367,16 +367,21 @@ function migrat_envi() {
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
     cat /mnt/install/setup/protocol.sh &&
     sleep 2
-    
-    ## create based configuration
-    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
+
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/pusr.sh' 
+   
 }
 
 
-function migrat_desk() {
+function migrat_prot() {
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         cp /root/conf/desktop/hyprland /mnt/install/setup/desktop
     fi
+
+    ## create based configuration
+    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
+
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
 }
 
 
@@ -387,9 +392,9 @@ function instal_main() {
     format_disk &&
     mounts_disk &&
     deploy_base &&
-    migrat_envi &&
-    migrat_desk &&
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
+    migrat_base &&
+    migrat_prot &&
+    
 }
 
 
