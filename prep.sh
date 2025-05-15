@@ -114,44 +114,37 @@ function parted_root() {
     if [[ ! -d /dev/proc ]];then
         pvcreate /dev/mapper/lvm_root
         vgcreate proc /dev/mapper/lvm_root
-        echo 'proc volume group is created';
         sleep 1
         
     fi
 
     if [[ ! -e /dev/proc/root  ]];then
         yes | lvcreate -L $LVMPROOT proc -n root &&
-        echo 'root logical volume is created';
         sleep 1
     fi
 
     if [[ ! -e /dev/proc/vars ]];then
         yes | lvcreate -L $LVMPVARS proc -n vars &&
-        echo 'var logical volume is created';
         sleep 1
     fi
 
     if [[ ! -e /dev/proc/vtmp ]];then
         yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
-        echo 'var/tmp logical volume is created';
         sleep 1
     fi
 
     if [[ ! -e /dev/proc/vlog ]];then
         yes | lvcreate -L $LVMPVTMP proc -n vlog &&
-        echo 'var/log logical volume is created';
         sleep 1
     fi 
 
     if [[ ! -e /dev/proc/vaud ]];then
         yes | lvcreate -L $LVMPVAUD proc -n vaud &&
-        echo 'var/log/audit logical volume is created';
         sleep 1
     fi
 
     if [[ ! -e /dev/proc/swap ]];then
         yes | lvcreate -l100%FREE proc -n swap
-        echo 'swap logical volume is created';
         sleep 1
     fi
 }
@@ -187,24 +180,20 @@ function parted_data() {
         if [[ ! -e /dev/data  ]];then
             pvcreate /dev/mapper/lvm_data
             vgcreate data /dev/mapper/lvm_data
-            echo 'lvm_data partition is created';
         fi
     
         if [[ ! -e /dev/data/home  ]];then
             yes | lvcreate -L $LVMDHOME data -n home
-            echo 'home logical volume is created';
             sleep 1
         fi
 
         if [[ ! -e /dev/data/pods ]];then
             yes | lvcreate -L $LVMDPODS data -n pods
-            echo 'pods logical volume is created';
             sleep 1
         fi
 
         if [[ ! -e /dev/data/host  ]];then
             yes | lvcreate -l $LVMDHOST data -n host
-            echo 'host logical volume is created';
             sleep 1
         fi
     fi
@@ -214,43 +203,43 @@ function parted_data() {
 function format_disk() {
 
     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/boot ]];then
-        yes | mkfs.vfat -F32 -S 4096 -n BOOT $DISKBOOT
+        yes | mkfs.vfat -F32 -S 4096 -n BOOT $DISKBOOT > /dev/null
     fi
 
     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/home ]];then
-        yes | mkfs.ext4 -b 4096 /dev/data/home
+        yes | mkfs.ext4 -b 4096 /dev/data/home > /dev/null
     fi
 
     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/containers ]];then
-        mkfs.xfs -fs size=4096 /dev/data/pods
+        mkfs.xfs -fs size=4096 /dev/data/pods > /dev/null
     fi
 
     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/libvirt/images ]];then
-        mkfs.xfs -fs size=4096 /dev/data/host
+        mkfs.xfs -fs size=4096 /dev/data/host > /dev/null
     fi
 
     if [[ ! -e /mnt/install/ ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/root
+        yes | mkfs.ext4 -b 4096 /dev/proc/root > /dev/null
     fi
 
     if [[ ! -e /mnt/install/var ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vars
+        yes | mkfs.ext4 -b 4096 /dev/proc/vars > /dev/null
     fi
 
     if [[ ! -e /mnt/install/var/tmp ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vtmp
+        yes | mkfs.ext4 -b 4096 /dev/proc/vtmp > /dev/null
     fi
 
     if [[ ! -e /mnt/install/var/log ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vlog
+        yes | mkfs.ext4 -b 4096 /dev/proc/vlog > /dev/null
     fi
 
     if [[ ! -e /mnt/install/var/audit ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vaud
+        yes | mkfs.ext4 -b 4096 /dev/proc/vaud > /dev/null
     fi
 
-    swapoff /dev/proc/swap
-    yes | mkswap /dev/proc/swap 
+    swapoff /dev/proc/swap > /dev/null
+    yes | mkswap /dev/proc/swap  > /dev/null
 }
 
 
