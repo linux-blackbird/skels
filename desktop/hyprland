@@ -72,4 +72,7 @@ install_pkgs &&
 install_devs &&
 install_brws &&
 install_play &&
-install_note
+install_note &&
+
+
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor

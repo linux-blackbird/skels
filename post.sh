@@ -76,7 +76,7 @@ function setup_desktp() {
 function setup_secure() {
 
 
-    pacman -S firewalld
+    pacman -S firewalld --noconfirm
     systemctl enable firewalld
 
 
@@ -189,5 +189,7 @@ setup_secure &&
 setup_mitiga &&
 setup_vhosts &&
 setup_podman &&
-setup_tweaks &&
-setup_tunned
+setup_tweaks && 
+setup_tunned &&
+
+mkinitcpio -P

@@ -255,6 +255,7 @@ function migrat_desk() {
     fi
 }
 
+
 function instal_prep() {
     prepar_luks &&
     parted_root &&
@@ -264,7 +265,15 @@ function instal_prep() {
     deploy_base &&
     migrat_envi &&
     migrat_desk &&
-    arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh'    
+    arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh'
+
+    read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
+
+    if [[ $REBOOTNOW === "y" ]] || [[ $REBOOTNOW === "Y" ]]lthen
+        umount -R /mnt
+        reboot
+    fi
 }
+
 
 instal_prep;
