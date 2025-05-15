@@ -9,12 +9,14 @@ sleep 5
 
 ## create hostname
 echo $HOSTNAME > /etc/hostname
+echo 'hostname is configured'
 slep 5
 
 
 ## create zoneinfo
 ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
+echo 'zone info is configured'
 slep 5
 
 
@@ -22,11 +24,13 @@ slep 5
 printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
 locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
+echo 'locales is configured'
 slep 5
 
 
 ## editor environment
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+echo 'environtment is configured'
 slep 5
 
 
@@ -49,7 +53,7 @@ slep 5
 
 ## networking
 ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-
+slep 5
 
 if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
     sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
