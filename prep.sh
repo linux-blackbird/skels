@@ -33,6 +33,14 @@ source /root/conf/protocol/$PROTOCOL
 
 
 ## begin operation
+if [[ -d /mnt/install ]];then
+    umount -R /mnt/install
+    rm -r /mnt/install
+fi
+
+
+
+
 function prepar_luks() {
 
     if [[ $PROCEDUR == "install" ]];then
@@ -217,11 +225,11 @@ function format_disk() {
         yes | mkfs.ext4 -b 4096 /dev/data/home
     fi
 
-     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/containers ]];then
+    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/containers ]];then
         mkfs.xfs -fs size=4096 /dev/data/pods
     fi
 
-     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/libvirt/images ]];then
+    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/libvirt/images ]];then
         mkfs.xfs -fs size=4096 /dev/data/host
     fi
 
