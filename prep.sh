@@ -18,7 +18,7 @@ fi
 ## variable
 USERNAME=$1
 PROCEDUR="reset"
-PACKBASE="base base-devel neovim git openssh polkit xfsprogs lvm2 less"
+PACKBASE="base base-devel neovim git openssh polkit less"
 
 
 
@@ -382,7 +382,7 @@ function instal_main() {
 function instal_init() {
     instal_main && sleep 2 &&
     umount -R /mnt/install &&
-    reboot
+    # reboot
 }
 
 instal_init

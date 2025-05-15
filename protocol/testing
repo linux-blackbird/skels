@@ -1,7 +1,3 @@
-DISKBOOT='/dev/vda1'
-DISKVAUL='/dev/vda2'
-DISKROOT='/dev/vda3'
-DISKDATA='/dev/vda4'
 BOOTSIZE="-L 320M"
 ROOTSIZE="-L 180M"
 ROOTSIZE="-L35G"

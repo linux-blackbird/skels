@@ -59,18 +59,22 @@ function remove_roots() {
 
 function setup_kernel() {
    
+
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm
+        echo "rd.luks.uuid=$(blkid -s UUID -o value /dev/$DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+        echo "data UUID=$(blkid -s UUID -o value /dev/$DISKDATA) none" >> /etc/crypttab
         echo "intel_iommu=on i915.fastboot=1" > /etc/cmdline.d/02-mods.conf
-        yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode bubblewrap-suid --noconfirm
     fi
 
     mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
+
     bootctl --path=/boot install
     touch /etc/vconsole.conf
 
-    echo "rd.luks.uuid=$(blkid -s UUID -o value /dev/$DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-    echo "data UUID=$(blkid -s UUID -o value /dev/$DISKDATA) none" >> /etc/crypttab
+
 }
+
 
 function setup_desktp() {
     /bin/bash /install/desktop
@@ -182,6 +186,7 @@ function setup_tunned() {
     fi
 }
 
+
 function setup_cleans() {
     rm -fr /install &&
     mkinitcpio -P
@@ -214,4 +219,3 @@ setup_tunned &&
 sleep 1
 setup_cleans &&
 sleep 1
-exit
