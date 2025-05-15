@@ -256,7 +256,7 @@ function migrat_desk() {
 }
 
 
-function instal_init() {
+function instal_main() {
     prepar_luks &&
     parted_root &&
     parted_data && 
@@ -269,7 +269,9 @@ function instal_init() {
 }
 
 
-function instal_exit() {
+function instal_init() {
+
+    instal_main;
 
     read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
 
@@ -279,7 +281,7 @@ function instal_exit() {
     fi
 }
 
+
 instal_init;
-instal_exit;
 
 
