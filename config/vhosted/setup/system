@@ -21,7 +21,7 @@ echo 'zone info is configured'
 
 
 ## config locales
-printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
+printf "$LOCALES1\n$LOCALES2" >> /etc/locale.gen
 locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
 echo 'locales is configured'
@@ -35,8 +35,6 @@ echo 'environtment is configured'
 
 
 #admin user
-
-
 if [[  -d /home/lektor ]];then
     useradd -d /home/lektor lektor
 else
@@ -45,7 +43,6 @@ fi
 usermod -a -G wheel lektor
 echo "lektor:1511" | chpasswd &&
 echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-
 echo 'lektor user created'
 
 
