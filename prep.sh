@@ -166,16 +166,6 @@ function parted_data() {
             exit 1
         fi
 
-        if [[ -z $LVMDPODS ]];then
-            echo 'error : logical volume pods size its not define at profile'
-            exit 1
-        fi
-
-        if [[ -z $LVMDHOST ]];then
-            echo 'error : logical volume host size its not define at profile'
-            exit 1
-        fi
-
 
         ## create logical volume
         if [[ ! -e /dev/data  ]];then
@@ -183,17 +173,17 @@ function parted_data() {
             vgcreate data /dev/mapper/lvm_data
         fi
     
-        if [[ ! -e /dev/data/home  ]];then
+        if [[ ! -e /dev/data/home ]];then
             yes | lvcreate -L $LVMDHOME data -n home
             sleep 1
         fi
 
-        if [[ ! -e /dev/data/pods ]];then
+        if [[ ! -e /dev/data/pods ]]&&[[ ! -z $LVMDPODS ]];then
             yes | lvcreate -L $LVMDPODS data -n pods
             sleep 1
         fi
 
-        if [[ ! -e /dev/data/host  ]];then
+        if [[ ! -e /dev/data/host ]]&&[[ ! -z $LVMDHOST ]];then
             yes | lvcreate -l $LVMDHOST data -n host
             sleep 1
         fi
