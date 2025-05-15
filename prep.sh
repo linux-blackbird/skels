@@ -27,13 +27,9 @@ if [[ ! -z $2 ]];then
 fi
 
 
-
 ## load source
 source /root/conf/users/$USERNAME
 source /root/conf/protocol/$PROTOCOL
-
-## fast reboot 
-printf "Do you want reboot after installation : [y/n] %s" "$REBOOTNOW" 
 
 
 ## begin operation
@@ -258,7 +254,7 @@ function migrat_desk() {
 }
 
 
-function instal_init() {
+function instal_main() {
     prepar_luks &&
     parted_root &&
     parted_data && 
@@ -271,16 +267,12 @@ function instal_init() {
 }
 
 
-function instal_main() {
-
-    if [[ $REBOOTNOW == "y" ]]||[[ $REBOOTNOW == "Y" ]];then
-        instal_init &&
-        umount -R /mnt &&
-        reboot
-    else 
-        instal_init
-    fi
+function instal_init() {
+    instal_main &&
+    sleep 2 &&
+    umount -R /mnt &&
+    reboot
 }
 
-instal_main
+instal_init
 
