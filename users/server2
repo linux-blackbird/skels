@@ -1,4 +1,4 @@
-MAKEUSER="vhosted"
+MAKEUSER="server2"
 PROTOCOL="vhosted"
 USERPACK="vhosted"
 NETSIPV4="10.10.1.11/24"

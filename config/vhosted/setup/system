@@ -9,25 +9,25 @@ cat /setup/setupenvi
 
 ## create hostname
 echo $HOSTNAME > /etc/hostname
-
+slep 1
 
 
 ## create zoneinfo
 ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
-
+slep 1
 
 
 ## config locales
 printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
 locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
-
+slep 1
 
 
 ## editor environment
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
-
+slep 1
 
 
 #admin user
@@ -36,6 +36,9 @@ useradd -m lektor
 echo "lektor:1511" | chpasswd
 usermod -a -G wheel lektor
 echo 'lektor user created'
+slep 1
+
+
 
 ## lock root  user
 passwd -l root
