@@ -43,7 +43,6 @@ echo 'share user created'
 
 ## linux  user
 useradd -m $USERNAME &&
-sleep 3
 echo '1511' | passwd $USERNAME --stdin 
 mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
 chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
