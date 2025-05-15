@@ -173,55 +173,55 @@ function parted_root() {
 function parted_data() {
 
     ## validation procedure
-    if [[ $PROCEDUR != 'install' ]];then
-        return;
-    fi
+    if [[ $PROCEDUR == 'install' ]];then
+         if [[ ! -e /dev/mapper/lvm_data ]];then
+            echo 'error : logical volume data not found'
+            exit 1
+        fi
 
-    if [[ ! -e /dev/mapper/lvm_data ]];then
-        echo 'error : logical volume data not found'
-        exit 1
-    fi
+        if [[ ! -z $LVMDHOME ]];then
+            echo 'error : logical volume home size its not define at profile'
+            exit 1
+        fi
 
-    if [[ ! -z $LVMDHOME ]];then
-        echo 'error : logical volume home size its not define at profile'
-        exit 1
-    fi
+        if [[ ! -z $LVMDPODS ]];then
+            echo 'error : logical volume pods size its not define at profile'
+            exit 1
+        fi
 
-    if [[ ! -z $LVMDPODS ]];then
-        echo 'error : logical volume pods size its not define at profile'
-        exit 1
-    fi
-
-    if [[ ! -z $LVMDHOST ]];then
-        echo 'error : logical volume host size its not define at profile'
-        exit 1
-    fi
+        if [[ ! -z $LVMDHOST ]];then
+            echo 'error : logical volume host size its not define at profile'
+            exit 1
+        fi
 
 
-    ## create logical volume
-    if [[ ! -e /dev/data  ]];then
-        pvcreate /dev/mapper/lvm_data
-        vgcreate data /dev/mapper/lvm_data
-        echo 'lvm_data partition is created';
-    fi
-  
-    if [[ ! -e /dev/data/home  ]];then
-        yes | lvcreate -L $LVMDHOME data -n home
-        echo 'home logical volume is created';
-        sleep 1
+        ## create logical volume
+        if [[ ! -e /dev/data  ]];then
+            pvcreate /dev/mapper/lvm_data
+            vgcreate data /dev/mapper/lvm_data
+            echo 'lvm_data partition is created';
+        fi
+    
+        if [[ ! -e /dev/data/home  ]];then
+            yes | lvcreate -L $LVMDHOME data -n home
+            echo 'home logical volume is created';
+            sleep 1
+        fi
+
+        if [[ ! -e /dev/data/pods ]];then
+            yes | lvcreate -L $LVMDPODS data -n pods
+            echo 'pods logical volume is created';
+            sleep 1
+        fi
+
+        if [[ ! -e /dev/data/host  ]];then
+            yes | lvcreate -l $LVMDHOST data -n host
+            echo 'host logical volume is created';
+            sleep 1
+        fi
     fi
 
-    if [[ ! -e /dev/data/pods ]];then
-        yes | lvcreate -L $LVMDPODS data -n pods
-        echo 'pods logical volume is created';
-        sleep 1
-    fi
-
-    if [[ ! -e /dev/data/host  ]];then
-        yes | lvcreate -l $LVMDHOST data -n host
-        echo 'host logical volume is created';
-        sleep 1
-    fi
+   
 }
 
 
