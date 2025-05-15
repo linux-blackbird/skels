@@ -25,7 +25,8 @@ function config_based() {
 
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-    useradd -m lektor && usermod -aG wheel lektor
+    useradd -m lektor && 
+    usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
     echo "1511" | passwd share --stdin
@@ -33,18 +34,20 @@ function create_admin() {
 
 
 function create_share() {
-    mkdir /tmp/share 
-    useradd -d /tmp/share share && echo "1511" | passwd share --stdin
+    mkdir /tmp/share &&
+    useradd -d /tmp/share share && 
+    sleep 1
+    echo "1511" | passwd share --stdin
     chown -R share:share /tmp/share
 }
 
 
 function create_users() { 
-    useradd -m $MAKEUSER && usermod -aG wheel lektor
-    mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,model,video}
-    chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/*
-    usermod -aG share $MAKEUSERl
-    setfacl -Rm u:$MAKEUSERl:rwx /tmp/share
+    useradd -m $MAKEUSER &&
+    mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,model,video} &&
+    chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/* &&
+    usermod -aG share $MAKEUSERl &&
+    setfacl -Rm u:$MAKEUSERl:rwx /tmp/share &&
     setfacl -Rm u:$MAKEUSERl:rwx /var/lib/libvirt/images
 }
 
@@ -186,16 +189,29 @@ function setup_cleans() {
 
 
 config_based &&
+sleep 1
 create_admin &&
+sleep 1
 create_share &&
+sleep 1
 create_users &&
+sleep 1
 remove_roots &&
+sleep 1
 setup_kernel &&
+sleep 1
 setup_secure &&
+sleep 1
 setup_mitiga &&
+sleep 1
 setup_vhosts &&
+sleep 1
 setup_podman &&
+sleep 1
 setup_tweaks && 
+sleep 1
 setup_tunned &&
+sleep 1
 setup_cleans &&
+sleep 1
 exit
