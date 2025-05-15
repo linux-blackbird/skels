@@ -352,10 +352,7 @@ function migrat_base() {
     mkdir /mnt/install/setup
 
 
-    ## post installation script
-    chmod +x /root/conf/post.sh
-    cp /root/conf/post.sh /mnt/install/setup
-
+   
 
     ## create user env
     cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
@@ -368,12 +365,16 @@ function migrat_base() {
     cat /mnt/install/setup/protocol.sh &&
     sleep 2
 
+
+    ## based installation script
+    chmod +x /root/conf/pusr.sh
+    cp /root/conf/pusr.sh /mnt/install/
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/pusr.sh' 
-   
 }
 
 
 function migrat_prot() {
+
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         cp /root/conf/desktop/hyprland /mnt/install/setup/desktop
     fi
@@ -381,7 +382,12 @@ function migrat_prot() {
     ## create based configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
 
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
+
+    ## protocol installation script
+    chmod +x /root/conf/post.sh
+    cp /root/conf/prot.sh /mnt/setup/
+
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/prot.sh' 
 }
 
 
