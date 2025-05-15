@@ -378,7 +378,7 @@ function protoc_init() {
 
 
     ## protocol installation script
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /proto/system'
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system'
 }
 
 
