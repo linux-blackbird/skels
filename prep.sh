@@ -256,7 +256,7 @@ function migrat_desk() {
 }
 
 
-function instal_main() {
+function instal_init() {
     prepar_luks &&
     parted_root &&
     parted_data && 
