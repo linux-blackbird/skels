@@ -1,0 +1,128 @@
+#!/bin/bash
+
+
+## generate source
+source /setup/setupenvi
+cat /setup/setupenvi
+
+
+
+## create hostname
+echo $HOSTNAME > /etc/hostname
+
+
+
+## create zoneinfo
+ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
+hwclock --systohc
+
+
+
+## config locales
+printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
+locale-gen && locale > /etc/locale.conf
+sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
+
+
+
+## editor environment
+echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+
+
+
+#admin user
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+useradd -m lektor && 
+echo "lektor:1511" | chpasswd
+usermod -a -G wheel lektor &&
+echo 'lektor user created'
+
+
+## lock root  user
+passwd -l root
+echo 'root account is locked'
+
+
+
+## kernel config   
+echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
+echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
+  
+
+
+## initram config 
+mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
+rm /boot/initramfs-*
+bootctl --path=/boot/ install
+touch /etc/vconsole.conf
+
+
+
+# aide file integrity
+gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
+sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide' > /dev/null
+sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm' > /dev/null
+aide --init
+
+
+## systemd journal remote config
+
+
+## firewalld config
+systemctl enable firewalld
+
+
+## tangserver config
+systemctl enable tangd.socket
+
+
+## apparmor config
+echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
+systemctl enable apparmor.service
+
+
+## netboot config
+curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
+mv -f recovery.efi /boot/efi/rescue/
+
+
+## vhost config
+systemctl enable libvirtd.socket
+usermod -aG libvirt lektor
+usermod -aG libvirt $MAKEUSER
+
+
+## reflector config
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
+
+
+## tunned config
+systemctl enable tuned-ppd
+
+
+## irg balanace config
+systemctl enable irqbalance.service
+
+
+## networking
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+
+if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
+    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
+    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+fi
+
+systemctl enable systemd-networkd.socket
+systemctl enable systemd-resolved
+
+
+## membalikan akses
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/
+
+
+## generate efi
+mkinitcpio -P

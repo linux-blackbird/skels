@@ -1,0 +1,18 @@
+
+PASSWORD=1511
+
+BOOTSIZE="-L 320M"
+KEYSSIZE="-L 580M"
+ROOTSIZE="-L 25G"
+DATASIZE="100%FREE"
+
+LVMPROOT="10G"
+LVMPVARS="5G"
+LVMPVTMP="500M"
+LVMPVLOG="5G"
+LVMPVAUD="1.5G"
+
+LVMDHOME="10G"
+LVMDHOST="100%FREE"
+
+PACKBASE="linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 base base-devel neovim git openssh polkit less firewalld tang apparmor libpwquality rsync qemu-base libvirt openbsd-net reflector nftables tuned tuned-ppd irqbalance"
