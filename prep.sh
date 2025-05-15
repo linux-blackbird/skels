@@ -271,13 +271,15 @@ function instal_init() {
 
 function instal_main() {
 
-    instal_init &&
 
-    read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
+    read -p "Do you want reboot after installation now : [y/n] " REBOOTNOW
 
     if [[ $REBOOTNOW == "y" ]]||[[ $REBOOTNOW == "Y" ]];then
-        umount -R /mnt
+        instal_init &&
+        umount -R /mnt &&
         reboot
+    else 
+        instal_init
     fi
 }
 
