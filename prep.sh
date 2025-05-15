@@ -234,24 +234,23 @@ function format_disk() {
     fi
 
     if [[ ! -e /mnt/install/ ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/root &&
+        yes | mkfs.ext4 -b 4096 /dev/proc/root
     fi
 
     if [[ ! -e /mnt/install/var ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vars &&
+        yes | mkfs.ext4 -b 4096 /dev/proc/vars
     fi
 
     if [[ ! -e /mnt/install/var/tmp ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vtmp &&
+        yes | mkfs.ext4 -b 4096 /dev/proc/vtmp
     fi
 
     if [[ ! -e /mnt/install/var/log ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vlog &&
+        yes | mkfs.ext4 -b 4096 /dev/proc/vlog
     fi
 
-
     if [[ ! -e /mnt/install/var/audit ]];then
-        yes | mkfs.ext4 -b 4096 /dev/proc/vaud &&
+        yes | mkfs.ext4 -b 4096 /dev/proc/vaud
     fi
 
     swapoff /dev/proc/swap
