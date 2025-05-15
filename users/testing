@@ -1,9 +1,9 @@
-MAKEUSER="testing"
-PROTOCOL="testing"
+MAKEUSER=testing
+PROTOCOL=testing
 NETSIPV4="10.10.1.150/24"
-NETSGATE="10.10.1.1"
-NETSDNSS="10.10.1.1"
-USERPACK="development"
+NETSGATE=10.10.1.1
+NETSDNSS=10.10.1.1
+USERPACK=development
 TIMEZONE=/Asia/Jakarta
 HOSTNAME=testing.lan
 LOCALES1="en_US.UTF-8 UTF-8"
