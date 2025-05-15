@@ -251,7 +251,7 @@ function migrat_envi() {
 function migrat_desk() {
 
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        cp /root/desktop/hyprland /mnt/install/desktop
+        cp /root/conf/desktop/hyprland /mnt/install/desktop
     fi
 }
 
