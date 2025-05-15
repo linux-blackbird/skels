@@ -64,15 +64,12 @@ function setup_kernel() {
         yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm
         echo "rd.luks.uuid=$(blkid -s UUID -o value /dev/$DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
         echo "data UUID=$(blkid -s UUID -o value /dev/$DISKDATA) none" >> /etc/crypttab
-        echo "intel_iommu=on i915.fastboot=1" > /etc/cmdline.d/02-mods.conf
+        echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
     fi
 
     mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
-
-    bootctl --path=/boot install
+    bootctl --path=/boot/ install
     touch /etc/vconsole.conf
-
-
 }
 
 
@@ -188,7 +185,7 @@ function setup_tunned() {
 
 
 function setup_cleans() {
-    rm -fr /install &&
+    # rm -fr /install &&
     mkinitcpio -P
 }
 
