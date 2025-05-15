@@ -267,6 +267,8 @@ function instal_prep() {
     migrat_desk &&
     arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh'
 
+
+    ## finishing
     read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
 
     if [[ $REBOOTNOW === "y" ]] || [[ $REBOOTNOW === "Y" ]]lthen
