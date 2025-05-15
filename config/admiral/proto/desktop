@@ -10,8 +10,8 @@ echo 'lektor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/00_lektor
 
 
 function install_aurs() {
-    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' 
-    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm'
+    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
+    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 }
 
 

@@ -54,7 +54,7 @@ function install_devs() {
 
 
 function install_brws() {
-    flatpak install --system --noninteractive org.mozilla.firefox 
+    flatpak install --system --noninteractive org.mozilla.firefox  > /dev/null
     sudo -H -u lektor bash -c "yay -S google-chrome --noconfirm" yay -S
 }
 
