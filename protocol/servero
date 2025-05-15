@@ -16,3 +16,4 @@ LVMDHOME="10G"
 LVMDHOST="100%FREE"
 
 PACKBASE="linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 base base-devel neovim git openssh polkit less firewalld tang apparmor libpwquality rsync qemu-base libvirt openbsd-net reflector nftables tuned tuned-ppd irqbalance"
+
