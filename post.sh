@@ -183,7 +183,7 @@ function setup_cleans() {
     mkinitcpio -P &&
 
     read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
-    if [[ $REBOOTNOW === "y" ]] || [[ $REBOOTNOW === "Y" ]]lthen
+    if [[ $REBOOTNOW == "y" ]] || [[ $REBOOTNOW == "Y" ]]lthen
         umount -R /mnt
         reboot
     fi
