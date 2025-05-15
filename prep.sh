@@ -376,7 +376,6 @@ function protoc_init() {
     ## migrate protocol configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
 
-
     ## protocol installation script
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system'
 }
