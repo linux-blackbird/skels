@@ -32,7 +32,7 @@ function create_admin() {
     useradd -m lektor && 
     passwd lektor
     usermod -aG wheel lektor &&
-    mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
+    mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
     chown -R lektor:lektor /home/lektor/*
     echo 'lektor user created'
     sleep 2
@@ -43,10 +43,8 @@ function create_share() {
 
     mkdir /tmp/share &&
 
-
     useradd -d /tmp/share share && 
-    echo $PASSWORD | passwd --stdin $USERNAME
-
+    echo $PASSWORD | passwd --stdin share
 
     chown -R share:share /tmp/share
     echo 'share user created'
@@ -57,9 +55,10 @@ function create_share() {
 function create_users() { 
 
     useradd -m $USERNAME &&
+    sleep 3
     echo $PASSWORD | passwd --stdin $USERNAME
 
-    mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,model,video} &&
+    mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
     chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
     usermod -aG share $USERNAME &&
     setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
