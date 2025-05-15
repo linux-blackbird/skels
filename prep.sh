@@ -28,6 +28,7 @@ fi
 ## load source
 source /root/conf/users/$USERNAME
 source /root/conf/protocol/$PROTOCOL
+source /root/conf/userpack/$USERPACK
 
 
 ## begin operation
@@ -326,7 +327,7 @@ function mounts_disk() {
 
 function deploy_base() {
 
-    pacstrap /mnt/install/ $PACKBASE
+    pacstrap /mnt/install/ $PACKBASE $PACKVARS
     genfstab -U /mnt/install/ > /mnt/install/etc/fstab 
     cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
     echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
@@ -334,9 +335,10 @@ function deploy_base() {
 
     ## prepare protocol env
     mkdir /mnt/install/setup
-    cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
-    cat /root/conf/users/$USERNAME >> /mnt/install/setup/protocol.sh
-
+    cat /root/conf/users/$USERNAME > /mnt/install/setup/setupenvi
+    cat /root/conf/protocol/$PROTOCOL >> /mnt/install/setup/setupenvi
+    cat /root/conf/userpack/$USERPACK >> /mnt/install/setup/setupenvi
+   
 
     ## migrate protocol configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
@@ -353,7 +355,7 @@ parted_data &&
 format_disk &&
 mounts_disk &&
 deploy_base && 
-rm /mnt/install/setup &&
+rm -fr /mnt/install/setup &&
 umount -R /mnt/install &&
 reboot
 

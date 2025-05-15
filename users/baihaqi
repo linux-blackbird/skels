@@ -1,11 +1,20 @@
 MAKEUSER="baihaqi"
 PROTOCOL="admiral"
+USERPACK=development
 NETSIPV4="10.10.2.5/24"
 NETSGATE="10.10.2.1"
-NETSDNSS="10.10.2.1"
-USERPACK="development"
-TIMEZONE="/Asia/Jakarta"
-HOSTNAME="kawakami.lan"
+NETSDNSS="10.10.1.1 8.8.8.8"
+TIMEZONE=/Asia/Jakarta
+HOSTNAME=kawakami.lan
 LOCALES1="en_US.UTF-8 UTF-8"
 LOCALES2="en_US ISO-8859-1"
 LOCALESC="en_US.UTF-8"
+#DISKBOOT="/dev/nvme0n1p1"
+#DISKVAUL="/dev/nvme0n1p2"
+#DISKROOT="/dev/nvme0n1p3"
+#DISKDATA="/dev/nvme0n1p4"
+DISKBOOT="/dev/vda1"
+DISKVAUL="/dev/vda2"
+DISKROOT="/dev/vda3"
+DISKDATA="/dev/vda4"
+

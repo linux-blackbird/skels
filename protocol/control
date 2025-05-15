@@ -1,3 +1,4 @@
+
 DISKBOOT='/dev/nvme0n1p1'
 DISKVAUL='/dev/nvme0n1p2'
 DISKROOT='/dev/nvme0n1p3'
