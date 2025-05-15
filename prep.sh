@@ -261,14 +261,15 @@ function format_disk() {
 function mounts_disk() {
 
     ## root mounting
-    if [[ ! -e /mnt/install/ ]];then
+    if [[ ! -d /mnt/install/ ]];then
+        mkdir /mnt/install
         mount /dev/proc/root /mnt/install/ &&
         echo 'mount root'
         sleep 1
     fi
 
     ## boot mounting
-    if [[ ! -e /mnt/install/boot ]];then
+    if [[ ! -d /mnt/install/boot ]];then
         mkdir /mnt/install/boot &&
         mount -o uid=0,gid=0,fmask=0077,dmask=0077 $DISKBOOT /mnt/install/boot &&
         echo 'mount boot'
@@ -276,7 +277,7 @@ function mounts_disk() {
     fi
 
     ## vars mounting
-    if [[ ! -e /mnt/install/var ]];then
+    if [[ ! -d /mnt/install/var ]];then
         mkdir /mnt/install/var &&
         mount /dev/proc/vars /mnt/install/var &&
         echo 'mount vars'
@@ -284,7 +285,7 @@ function mounts_disk() {
     fi
 
     ## vtmp mounting
-    if [[ ! -e /mnt/install/var/tmp ]];then
+    if [[ ! -d /mnt/install/var/tmp ]];then
         mkdir /mnt/install/var/tmp &&
         mount /dev/proc/vtmp /mnt/install/var/tmp &&
         echo 'mount vtmp'
@@ -292,7 +293,7 @@ function mounts_disk() {
     fi
 
     ## vlog mounting
-    if [[ ! -e /mnt/install/var/log ]];then
+    if [[ ! -d /mnt/install/var/log ]];then
         mkdir /mnt/install/var/log &&
         mount /dev/proc/vlog /mnt/install/var/log &&
         echo 'mount vlog'
@@ -300,7 +301,7 @@ function mounts_disk() {
     fi
 
     ## vaud mounting
-    if [[ ! -e /mnt/install/var/log/audit ]];then
+    if [[ ! -d /mnt/install/var/log/audit ]];then
         mkdir /mnt/install/var/log/audit &&
         mount /dev/proc/vaud /mnt/install/var/log/audit &&
         echo 'mount vaud'
@@ -308,7 +309,7 @@ function mounts_disk() {
     fi
 
     ## home mounting
-    if [[ ! -e /mnt/install/home ]];then
+    if [[ ! -d /mnt/install/home ]];then
         mkdir /mnt/install/home &&
         mount /dev/data/home /mnt/install/home &&
         echo 'mount home'
@@ -316,7 +317,7 @@ function mounts_disk() {
     fi
  
     ## pods mounting
-    if [[ ! -e /mnt/install/var/lib/libvirt/images ]];then
+    if [[ ! -d /mnt/install/var/lib/libvirt/images ]];then
         mkdir /mnt/install/var/lib /mnt/install/var/lib/libvirt /mnt/install/var/lib/libvirt/images &&
         mount /dev/data/host /mnt/install/var/lib/libvirt/images &&
         echo 'mount pods'
@@ -324,7 +325,7 @@ function mounts_disk() {
     fi
 
     ## host mounting
-    if [[ ! -e /mnt/install/var/lib/containers ]];then
+    if [[ ! -d /mnt/install/var/lib/containers ]];then
         mkdir /mnt/install/var/lib/containers &&
         mount /dev/data/pods /mnt/install/var/lib/containers &&
         echo 'mount host'
