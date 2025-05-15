@@ -1,10 +1,9 @@
 #!/bin/bash
 
 source /setup/user.sh
-cat /setup/user.sh
 sleep 1
+
 source /setup/protocol.sh
-cat /setup/protocol.sh
 sleep 1
 
 
