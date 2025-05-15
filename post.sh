@@ -41,13 +41,11 @@ function create_admin() {
 
 function create_share() {
 
-    SHAREPWD=$(echo $PASSWORD | md5sum | cut -c1-8)
-
     mkdir /tmp/share &&
 
 
     useradd -d /tmp/share share && 
-    echo $SHAREPWD | passwd --stdin $USERNAME
+    echo $PASSWORD | passwd --stdin $USERNAME
 
 
     chown -R share:share /tmp/share
@@ -58,10 +56,8 @@ function create_share() {
 
 function create_users() { 
 
-    USERSPWD=$(echo $PASSWORD | md5sum | cut -c1-8)
-
     useradd -m $USERNAME &&
-    echo $USERSPWD | passwd --stdin $USERNAME
+    echo $PASSWORD | passwd --stdin $USERNAME
 
     mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,model,video} &&
     chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
