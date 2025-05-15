@@ -104,9 +104,9 @@ sudo git clone https://github.com/linux-blackbird/wall  /tmp/wall
 rm /usr/share/hypr/wall0.png
 rm /usr/share/hypr/wall1.png
 rm /usr/share/hypr/wall3.png
-cp /tmp/wall/darker.png usr/share/hypr/wall0.png
-cp /tmp/wall/darker.png usr/share/hypr/wall2.png
-cp /tmp/wall/darker.png usr/share/hypr/wall3.png
+cp /tmp/wall/darker.png /usr/share/hypr/wall0.png
+cp /tmp/wall/darker.png /usr/share/hypr/wall2.png
+cp /tmp/wall/darker.png /usr/share/hypr/wall3.png
 
 
 
