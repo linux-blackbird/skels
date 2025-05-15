@@ -7,7 +7,7 @@ source /setup/protocol.sh
 sleep 1
 
 
-function config_based() {
+config_based() {
 
     ## create hostname
     echo $HOSTNAME > /etc/hostname
@@ -66,7 +66,7 @@ function config_based() {
 }
 
 
-function setup_kernel() {
+setup_kernel() {
    
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm > /dev/null
@@ -81,14 +81,14 @@ function setup_kernel() {
 }
 
 
-function install_aurs() {
+install_aurs() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
     sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 }
 
 
-function install_hypr() {
+install_hypr() {
 
     pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm 
     sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
@@ -99,20 +99,20 @@ function install_hypr() {
 }
 
 
-function install_sddm() {
+install_sddm() {
     sudo pacman -S sddm --noconfirm &&
     sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
     sudo systemctl enable sddm
 }
 
 
-function install_icon() {
+install_icon() {
     sudo pacman -S papirus-icon-theme --noconfirm &&
     sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
 }
 
 
-function install_pkgs() {
+install_pkgs() {
     pacman -S flatpak gnome-software --noconfirm &&
     sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
     sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
@@ -121,30 +121,30 @@ function install_pkgs() {
 }
 
 
-function install_devs() {
+install_devs() {
     sudo chown root:root /opt/visual-studio-code/chrome-sandbox &&
     sudo chmod 4775 /opt/visual-studio-code/chrome-sandbox
 }
 
 
-function install_brws() {
+install_brws() {
     flatpak install --system --noninteractive org.mozilla.firefox &&
     sudo -H -u lektor bash -c "yay -S google-chrome --noconfirm" yay -S
 }
 
 
-function install_play() {
-    pacman -S mpd mpc xfmpc --noconfirm > /dev/null &&
+install_play() {
+    pacman -S mpd mpc xfmpc --noconfirm 
 }
 
 
-function install_note() {
-    pacman -S hugo obsidian --noconfirm > /dev/null &&
+install_note() {
+    pacman -S hugo obsidian --noconfirm 
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 }
 
 
-function setup_secure() {
+setup_secure() {
 
 
     pacman -S firewalld --noconfirm
@@ -181,7 +181,7 @@ function setup_secure() {
 }
 
 
-function setup_mitiga() {
+setup_mitiga() {
 
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         pacman -S rsync grsync --noconfirm
@@ -196,7 +196,7 @@ function setup_mitiga() {
 }
 
 
-function setup_vhosts() {
+setup_vhosts() {
 
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         pacman -S qemu-base libvirt virt-manager openbsd-netcat --noconfirm
@@ -211,7 +211,7 @@ function setup_vhosts() {
 }
 
 
-function setup_podman() {
+setup_podman() {
 
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         pacman -S podman crun fuse-overlayfs podman-desktop podman-docker podman-compose --noconfirm
@@ -225,7 +225,7 @@ function setup_podman() {
 }
 
 
-function setup_tweaks() {
+setup_tweaks() {
     pacman -S reflector --noconfirm 
     cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
