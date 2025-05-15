@@ -333,6 +333,7 @@ function deploy_base() {
 
 
     ## prepare protocol env
+    mkdir /mnt/install/setup
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
     cat /root/conf/users/$USERNAME >> /mnt/install/setup/protocol.sh
 
