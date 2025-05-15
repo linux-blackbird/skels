@@ -69,8 +69,9 @@ echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
   
 
 
-## initram config   
+## initram config 
 mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
+rm /boot/iniramfs-*
 bootctl --path=/boot/ install
 touch /etc/vconsole.conf
 
