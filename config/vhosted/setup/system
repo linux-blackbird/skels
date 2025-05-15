@@ -5,20 +5,19 @@
 source /setup/setupenvi
 cat /setup/setupenvi
 echo 'export is configured'
-sleep 5
 
 
 ## create hostname
 echo $HOSTNAME > /etc/hostname
 echo 'hostname is configured'
-sleep 5
+
 
 
 ## create zoneinfo
 ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
 echo 'zone info is configured'
-sleep 5
+
 
 
 ## config locales
@@ -26,13 +25,13 @@ printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
 locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
 echo 'locales is configured'
-sleep 5
+
 
 
 ## editor environment
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
 echo 'environtment is configured'
-sleep 5
+
 
 
 #admin user
@@ -41,7 +40,6 @@ useradd -m lektor &&
 echo "lektor:1511" | chpasswd &&
 usermod -a -G wheel lektor
 echo 'lektor user created'
-sleep 5
 
 
 
