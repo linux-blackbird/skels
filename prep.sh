@@ -368,7 +368,7 @@ function migrat_base() {
 
     ## based installation script
     chmod +x /root/conf/pusr.sh
-    cp /root/conf/pusr.sh /mnt/install/
+    cp /root/conf/pusr.sh /mnt/install/setup/
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/pusr.sh' 
 }
 
@@ -385,7 +385,7 @@ function migrat_prot() {
 
     ## protocol installation script
     chmod +x /root/conf/post.sh
-    cp /root/conf/prot.sh /mnt/setup/
+    cp /root/conf/prot.sh /mnt/install/setup/
 
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/prot.sh' 
 }
