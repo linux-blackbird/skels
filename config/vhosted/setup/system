@@ -46,10 +46,29 @@ echo 'root account is locked'
 slep 5
 
 
+
+## networking
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+
+if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
+    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
+    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+fi
+
+systemctl enable systemd-networkd.socket
+systemctl enable systemd-resolved
+slep 5
+
+
+
 ## kernel config   
 echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
 echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
 echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
+echo 'kernel is configured'
 slep 5
 
 
@@ -58,6 +77,7 @@ mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
 rm /boot/initramfs-*
 bootctl --path=/boot/ install
 touch /etc/vconsole.conf
+echo 'boot is configured'
 slep 5
 
 
@@ -115,20 +135,6 @@ systemctl enable irqbalance.service
 slep 5
 
 
-## networking
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-
-
-if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
-    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
-    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
-    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
-    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
-fi
-
-systemctl enable systemd-networkd.socket
-systemctl enable systemd-resolved
-slep 5
 
 
 ## generate efi
