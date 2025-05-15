@@ -179,15 +179,8 @@ function setup_tunned() {
 }
 
 function setup_cleans() {
-
-    mkinitcpio -P &&
-
-    read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
-
-    if [[ $REBOOTNOW == "y" ]]||[[ $REBOOTNOW == "Y" ]];then
-        umount -R /mnt
-        reboot
-    fi
+    rm -fr /install &&
+    mkinitcpio -P
 }
 
 
@@ -203,4 +196,5 @@ setup_vhosts &&
 setup_podman &&
 setup_tweaks && 
 setup_tunned &&
-setup_cleans
+setup_cleans &&
+exit

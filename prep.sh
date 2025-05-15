@@ -268,4 +268,18 @@ function instal_init() {
     arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh' 
 }
 
+
+function instal_exit() {
+
+    read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
+
+    if [[ $REBOOTNOW == "y" ]]||[[ $REBOOTNOW == "Y" ]];then
+        umount -R /mnt
+        reboot
+    fi
+}
+
 instal_init;
+instal_exit;
+
+
