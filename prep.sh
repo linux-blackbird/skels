@@ -18,8 +18,6 @@ fi
 ## variable
 USERNAME=$1
 PROCEDUR="reset"
-PACKBASE="base base-devel neovim git openssh polkit less"
-
 
 
 if [[ ! -z $2 ]];then
@@ -346,50 +344,45 @@ function deploy_base() {
 }
 
 
-function migrat_base() {
+function basics_init() {
 
     ## prepare post installation
     mkdir /mnt/install/setup
 
 
-    ## create based configuration
+    ## migrate based configuration
     cp -fr /root/conf/config/general/* /mnt/install/
 
 
-    ## create user env
-    cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
-    cat /mnt/install/setup/user.sh &&
-    sleep 2
-    
-
-    ## create protocol env
+    ## prepare protocol env
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
     cat /mnt/install/setup/protocol.sh &&
     sleep 2
 
 
+    ## prepare user env
+    cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
+    cat /mnt/install/setup/user.sh &&
+    sleep 2
+    
+
     ## based installation script
-    chmod +x /root/conf/pusr.sh
-    cp /root/conf/pusr.sh /mnt/install/setup/pusr.sh
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/pusr.sh' 
+    chmod +x /root/conf/post.sh
+    cp /root/conf/post.sh /mnt/install/setup/pusr.sh
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
 }
 
 
-function migrat_prot() {
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        cp /root/conf/desktop/hyprland /mnt/install/setup/desktop
-    fi
+function protoc_init() {
 
-    ## create based configuration
+    ## migrate protocol configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
 
 
     ## protocol installation script
-    chmod +x /root/conf/post.sh
-    cp /root/conf/prot.sh /mnt/install/setup/
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system' 
 
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/prot.sh' 
 }
 
 
@@ -400,7 +393,7 @@ function instal_main() {
     format_disk &&
     mounts_disk &&
     deploy_base &&
-    migrat_base &&
+    basics_init &&
     migrat_prot 
 }
 

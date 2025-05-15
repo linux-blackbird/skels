@@ -30,7 +30,7 @@ function config_based() {
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    echo $PASSWORD | passwd --stdin lektor &&
+    chage -d 0 lektor
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
@@ -53,7 +53,7 @@ function create_share() {
 
 function create_users() { 
     useradd -m $USERNAME &&
-    chage -d 0 "${USERNAME}"
+    chage -d 0 $USERNAME &&
     mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,model,video} &&
     chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
     usermod -aG share $USERNAME &&
@@ -63,13 +63,14 @@ function create_users() {
 }
 
 
-function remove_roots() {
+function locking_root() {
     passwd -l root
-     echo 'root account is locked'
+    echo 'root account is locked'
+    sleep 2
 }
 
 config_based &&
 create_admin &&
 create_share &&
 create_users &&
-remove_roots 
+locking_root 
