@@ -39,8 +39,6 @@ if [[ -d /mnt/install ]];then
 fi
 
 
-
-
 function prepar_luks() {
 
     if [[ $PROCEDUR == "install" ]];then
