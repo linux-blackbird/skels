@@ -1,5 +1,10 @@
 #!/bin/bash
 
+source /setup/user.sh
+sleep 1
+
+source /setup/protocol.sh
+sleep 1
 
 echo 'lektor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/00_lektor
 

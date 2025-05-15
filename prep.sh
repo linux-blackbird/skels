@@ -361,7 +361,6 @@ function basics_init() {
 
     ## prepare user env
     cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
-    cat /mnt/install/setup/user.sh &&
     sleep 2
     
 
@@ -375,11 +374,11 @@ function basics_init() {
 function protoc_init() {
 
     ## migrate protocol configuration
-    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
+    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
 
 
     ## protocol installation script
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system'
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /proto/system'
 }
 
 
