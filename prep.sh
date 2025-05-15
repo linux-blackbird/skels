@@ -380,8 +380,8 @@ function instal_main() {
 
 
 function instal_init() {
-    instal_main && sleep 2 &&
-    umount -R /mnt/install &&
+    instal_main && sleep 2
+    ## umount -R /mnt/install
     # reboot
 }
 
