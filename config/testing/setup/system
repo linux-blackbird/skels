@@ -3,19 +3,23 @@
 
 ## generate source
 source /setup/protocol.sh
+cat /setup/protocol.sh
 
 
 ## create hostname
 echo $HOSTNAME > /etc/hostname
 
+
 ## create zoneinfo
 ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
+
 
 ## config locales
 printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
 locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
+
 
 ## editor environment
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
