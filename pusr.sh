@@ -37,7 +37,7 @@ function create_admin() {
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
     echo 'lektor user created'
-    sleep 2
+    sleep 10
 }
 
 
@@ -49,7 +49,7 @@ function create_share() {
     chown -R share:share /tmp/share
 
     echo 'share user created'
-    sleep 2
+    sleep 10
 }
 
 
@@ -61,7 +61,7 @@ function create_users() {
     usermod -aG share $MAKEUSER &&
     setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
     echo 'custom user created'
-    sleep 2
+    sleep 10
 }
 
 
