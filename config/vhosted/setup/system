@@ -35,10 +35,17 @@ echo 'environtment is configured'
 
 
 #admin user
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor &&
-useradd -m lektor &&
-echo "lektor:1511" | chpasswd &&
+
+
+if [[  -d /home/lektor ]];then
+    useradd -d /home/lektor lektor
+else
+    useradd -m lektor
+fi
 usermod -a -G wheel lektor
+echo "lektor:1511" | chpasswd &&
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+
 echo 'lektor user created'
 
 
@@ -130,7 +137,6 @@ sleep 5
 
 ## tunned config
 systemctl enable tuned-ppd
-tuned-adm profile virtual-host
 sleep 5
 
 
