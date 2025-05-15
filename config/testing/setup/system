@@ -112,7 +112,7 @@ flatpak override --env=ICON_THEME=Papirus-Dark
 
 
 # firefox
-flatpak install --system --noninteractive org.mozilla.firefox &&
+#flatpak install --system --noninteractive org.mozilla.firefox &&
 
 
 
