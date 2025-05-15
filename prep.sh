@@ -272,7 +272,7 @@ function instal_init() {
 function instal_main() {
 
 
-    read -p "Do you want reboot after installation now : [y/n] " REBOOTNOW
+    read -p "Do you want reboot after installation : [y/n] " REBOOTNOW
 
     if [[ $REBOOTNOW == "y" ]]||[[ $REBOOTNOW == "Y" ]];then
         instal_init &&
