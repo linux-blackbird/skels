@@ -24,7 +24,7 @@ echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
 #admin user
 echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 useradd -m lektor && 
-echo "lektor:$PASSWORD" | chpasswd
+echo "lektor:1511" | chpasswd
 usermod -aG wheel lektor &&
 mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
 chown -R lektor:lektor /home/lektor/*
@@ -35,7 +35,7 @@ echo 'lektor user created'
 ## share user
 mkdir /tmp/share &&
 useradd -d /tmp/share share && 
-echo $PASSWORD | passwd --stdin share
+echo '1511' | passwd --stdin share
 chown -R share:share /tmp/share
 echo 'share user created'
 
@@ -44,7 +44,7 @@ echo 'share user created'
 ## linux  user
 useradd -m $USERNAME &&
 sleep 3
-echo $PASSWORD | passwd $USERNAME --stdin 
+echo '1511' | passwd $USERNAME --stdin 
 mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
 chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
 usermod -aG share $USERNAME &&
