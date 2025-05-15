@@ -352,9 +352,9 @@ parted_root &&
 parted_data && 
 format_disk &&
 mounts_disk &&
-deploy_base 
-
-# umount -R /mnt/install
-# reboot
+deploy_base && 
+rm /mnt/install/setup &&
+umount -R /mnt/install &&
+reboot
 
 

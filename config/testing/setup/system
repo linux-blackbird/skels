@@ -6,13 +6,16 @@ source /setup/protocol.sh
 cat /setup/protocol.sh
 
 
+
 ## create hostname
 echo $HOSTNAME > /etc/hostname
+
 
 
 ## create zoneinfo
 ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
+
 
 
 ## config locales
@@ -21,8 +24,10 @@ locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
 
 
+
 ## editor environment
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+
 
 
 #admin user
@@ -93,6 +98,13 @@ echo $PASSWORD | sudo -H -u lektor bash -c 'yay -S hyprshot visual-studio-code-b
 systemctl --global enable hyprpolkitagent
 systemctl --global enable hypridle.service
 systemctl --global enable waybar
+sudo git clone https://github.com/linux-blackbird/wall  /tmp/wall
+rm /usr/share/hypr/wall0.png
+rm /usr/share/hypr/wall1.png
+rm /usr/share/hypr/wall3.png
+cp /tmp/wall/darker.png usr/share/hypr/wall0.png
+cp /tmp/wall/darker.png usr/share/hypr/wall2.png
+cp /tmp/wall/darker.png usr/share/hypr/wall3.png
 
 
 
@@ -116,7 +128,7 @@ flatpak override --env=ICON_THEME=Papirus-Dark
 
 
 # firefox
-#flatpak install --system --noninteractive org.mozilla.firefox &&
+flatpak install --system --noninteractive org.mozilla.firefox &&
 
 
 
@@ -186,7 +198,12 @@ systemctl enable tuned-ppd
 ## irg balanace config
 systemctl enable irqbalance.service
 
+
+
+## membalikan akses
 echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/
 
 
+
+## generate efi
 mkinitcpio -P
