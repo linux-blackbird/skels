@@ -1,7 +1,9 @@
 #!/bin/bash
 
 source /setup/user.sh
+sleep 1
 source /setup/protocol.sh
+sleep 1
 
 
 function config_based() {
@@ -30,6 +32,8 @@ function create_admin() {
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
+    echo 'lektor user created'
+    sleep 2
 }
 
 
@@ -38,6 +42,9 @@ function create_share() {
     useradd -d /tmp/share share && 
     echo "1511" | passwd share --stdin
     chown -R share:share /tmp/share
+
+    echo 'share user created'
+    sleep 2
 }
 
 
@@ -49,6 +56,8 @@ function create_users() {
     usermod -aG share $MAKEUSERl &&
     setfacl -Rm u:$MAKEUSERl:rwx /tmp/share &&
     setfacl -Rm u:$MAKEUSERl:rwx /var/lib/libvirt/images
+    echo 'custom user created'
+    sleep 2
 }
 
 
