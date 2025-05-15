@@ -368,10 +368,9 @@ function basics_init() {
 
     ## based installation script
     chmod +x /root/conf/post.sh
-    cp /root/conf/post.sh /mnt/install/setup/pusr.sh
+    cp /root/conf/post.sh /mnt/install/setup/post.sh
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
 }
-
 
 
 function protoc_init() {
@@ -381,8 +380,7 @@ function protoc_init() {
 
 
     ## protocol installation script
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system' 
-
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system'
 }
 
 
