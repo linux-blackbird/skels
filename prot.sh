@@ -4,9 +4,8 @@ source /setup/user.sh
 cat /setup/user.sh
 sleep 1
 source /setup/protocol.sh
-cat /setup/user.sh
+cat /setup/protocol.sh
 sleep 1
-
 
 
 function setup_kernel() {
@@ -140,17 +139,6 @@ function setup_cleans() {
     mkinitcpio -P
 }
 
-
-config_based &&
-sleep 1
-create_admin &&
-sleep 1
-create_share &&
-sleep 1
-create_users &&
-sleep 1
-remove_roots &&
-sleep 1
 setup_kernel &&
 sleep 1
 setup_secure &&
