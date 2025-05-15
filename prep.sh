@@ -347,7 +347,7 @@ function deploy_base() {
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
 
     ## protocol installation script
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system'
+    arch-chroot /mnt/install/ -c '/bin/sh /setup/system'
 
 }
 
