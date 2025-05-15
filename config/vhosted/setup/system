@@ -4,6 +4,7 @@
 ## generate source
 source /setup/setupenvi
 cat /setup/setupenvi
+echo 'export is configured'
 sleep 5
 
 
