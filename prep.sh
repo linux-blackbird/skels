@@ -351,20 +351,20 @@ function deploy_base() {
 function migrat_envi() {
 
     ## prepare post installation
-    mkdir /mnt/install/install
+    mkdir /mnt/install/setup
     chmod +x /root/conf/post.sh
 
     ## post installation script
-    cp /root/conf/post.sh /mnt/install/install
+    cp /root/conf/post.sh /mnt/install/setup
 
     ## create user env
-    cat /root/conf/users/$USERNAME > /mnt/install/install/user.sh 
-    cat /mnt/install/install/user.sh &&
+    cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
+    cat /mnt/install/setup/user.sh &&
     sleep 2
     
     ## create protocol env
-    cat /root/conf/protocol/$PROTOCOL > /mnt/install/install/protocol.sh
-    cat /mnt/install/install/protocol.sh &&
+    cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
+    cat /mnt/install/setup/protocol.sh &&
     sleep 2
     
     ## create based configuration
@@ -374,7 +374,7 @@ function migrat_envi() {
 
 function migrat_desk() {
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        cp /root/conf/desktop/hyprland /mnt/install/install/desktop
+        cp /root/conf/desktop/hyprland /mnt/install/setup/desktop
     fi
 }
 

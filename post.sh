@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /install/user.sh
-source /install/protocol.sh
+source /setup/user.sh
+source /setup/protocol.sh
 
 
 function config_based() {
@@ -73,7 +73,7 @@ function setup_kernel() {
 
 
 function setup_desktp() {
-    /bin/bash /install/desktop
+    /bin/bash /setup/desktop
 }
 
 
