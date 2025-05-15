@@ -69,18 +69,12 @@ function prepar_luks() {
             cryptsetup luksOpen $DISKROOT lvm_root &&
             echo 'encrypted root volume is ready' &&
             sleep 2
-        else
-            echo 'error : lvm_root volume not found' &&
-            exit 1
         fi
 
         if [[ -e /dev/mapper/lvm_data  ]];then
             cryptsetup luksOpen $DISKDATA lvm_data &&
             echo 'encrypted data volume is ready' &&
             sleep 2
-        else
-            echo 'error : lvm_data volume not found' &&
-            exit 1
         fi
     fi
 }
@@ -220,8 +214,6 @@ function parted_data() {
             sleep 1
         fi
     fi
-
-   
 }
 
 
