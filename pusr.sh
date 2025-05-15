@@ -32,7 +32,7 @@ function config_based() {
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    echo "1511" | passwd lektor --stdin &&
+    echo $PASSWORD | passwd lektor --stdin &&
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
@@ -44,7 +44,8 @@ function create_admin() {
 function create_share() {
     mkdir /tmp/share &&
     useradd -d /tmp/share share && 
-    echo "1511" | passwd share --stdin
+
+    echo $PASSWORD | passwd share --stdin
     chown -R share:share /tmp/share
 
     echo 'share user created'
@@ -54,12 +55,11 @@ function create_share() {
 
 function create_users() { 
     useradd -m $MAKEUSER &&
-    echo "1511" | passwd $MAKEUSER --stdin
+    echo $PASSWORD | passwd $MAKEUSER --stdin &&
     mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,model,video} &&
     chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/* &&
-    usermod -aG share $MAKEUSERl &&
-    setfacl -Rm u:$MAKEUSERl:rwx /tmp/share &&
-    setfacl -Rm u:$MAKEUSERl:rwx /var/lib/libvirt/images
+    usermod -aG share $MAKEUSER &&
+    setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
     echo 'custom user created'
     sleep 2
 }
@@ -72,4 +72,5 @@ function remove_roots() {
 config_based &&
 create_admin &&
 create_share &&
+create_users &&
 remove_roots 

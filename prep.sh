@@ -352,7 +352,9 @@ function migrat_base() {
     mkdir /mnt/install/setup
 
 
-   
+    ## create based configuration
+    cp -fr /root/conf/config/general/* /mnt/install/
+
 
     ## create user env
     cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
