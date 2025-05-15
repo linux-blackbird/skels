@@ -45,24 +45,37 @@ function prepar_luks() {
             cryptsetup luksFormat $DISKROOT &&
             cryptsetup luksOpen $DISKROOT lvm_root
             sleep 2
+        else
+            cryptsetup luksOpen $DISKROOT lvm_root
+            sleep 2
         fi
         
+
         if [[ ! -e /dev/mapper/lvm_data  ]];then
             cryptsetup luksFormat $DISKDATA
+            cryptsetup luksOpen $DISKDATA lvm_data
+            sleep 2
+        else
             cryptsetup luksOpen $DISKDATA lvm_data
             sleep 2
         fi
 
     else
 
-        if [[ ! -e /dev/mapper/lvm_root  ]];then
+        if [[ -e /dev/mapper/lvm_root  ]];then
             cryptsetup luksOpen $DISKROOT lvm_root
-            sleep 5
+            sleep 2
+        else
+            echo 'error : lvm_root volume not found'
+            exit 1
         fi
 
-        if [[ ! -e /dev/mapper/lvm_data  ]];then
+        if [[ -e /dev/mapper/lvm_data  ]];then
             cryptsetup luksOpen $DISKDATA lvm_data
-            sleep 5
+            sleep 2
+        else
+            echo 'error : lvm_data volume not found'
+            exit 1
         fi
     fi
 }
@@ -70,7 +83,7 @@ function prepar_luks() {
 
 function parted_root() {
 
-    if [[ ! -e /dev/mapper/lvm_root  ]];then
+    if [[ $PROCEDUR == "install"  ]];then
 
         if [[ ! -e /dev/data/host  ]];then
             yes | pvcreate /dev/mapper/lvm_root &&
