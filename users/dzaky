@@ -1,7 +1,6 @@
 MAKEUSER="dzaky"
 PROTOCOL="admiral"
-USERPACK=multimedia
-VARIANTS="multimedia"
+USERPACK="multimedia"
 NETSIPV4="10.10.2.4/24"
 NETSGATE="10.10.2.1"
 NETSDNSS="10.10.1.1 8.8.8.8"
