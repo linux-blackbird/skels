@@ -30,7 +30,8 @@ function config_based() {
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    passwd lektor
+    chpasswd
+    echo 'lektor:1511' | chpasswd
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
     chown -R lektor:lektor /home/lektor/*
@@ -56,7 +57,7 @@ function create_users() {
 
     useradd -m $USERNAME &&
     sleep 3
-    echo $PASSWORD | passwd --stdin $USERNAME
+    echo $PASSWORD | passwd $USERNAME --stdin 
 
     mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
     chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
