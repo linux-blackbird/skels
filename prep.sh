@@ -61,13 +61,13 @@ function prepar_luks() {
 
     else
 
-        if [[ -e /dev/mapper/lvm_root  ]];then
+        if [[ ! -e /dev/mapper/lvm_root  ]];then
             cryptsetup luksOpen $DISKROOT lvm_root &&
             echo 'encrypted root volume is ready' &&
             sleep 2
         fi
 
-        if [[ -e /dev/mapper/lvm_data  ]];then
+        if [[ ! -e /dev/mapper/lvm_data  ]];then
             cryptsetup luksOpen $DISKDATA lvm_data &&
             echo 'encrypted data volume is ready' &&
             sleep 2
