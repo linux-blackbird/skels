@@ -157,11 +157,23 @@ systemctl enable apparmor.service
 ## gnome keyring
 mkdir /home/lektor/.gnupg
 echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
+
 chown -R lektor:lektor /home/lektor/.gnupg
+chmod 700 /home/lektor/.gnupg
+chmod 600 /home/lektor/.gnupg/*
+chmod 700 /home/lektor/.gnupg/*.d
+
+chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/.gnupg
+chmod 700 /home/$MAKEUSER/.gnupg
+chmod 600 /home/$MAKEUSER/.gnupg/*
+chmod 700 /home/$MAKEUSER/.gnupg/*.d
+
 sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
 echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
 systemctl --global enable gnome-keyring-daemon.socket
 systemctl --global enable gcr-ssh-agent.socket
+
+
 
 
 
@@ -200,6 +212,7 @@ systemctl enable irqbalance.service
 
 
 ## networking
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 systemctl enable systemd-networkd.socket
 systemctl enable systemd-resolved
 
