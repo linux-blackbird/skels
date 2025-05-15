@@ -45,10 +45,6 @@ function prepar_luks() {
             cryptsetup luksOpen $DISKROOT lvm_root &&
             echo 'encrypted root volume is ready'
             sleep 2
-        else
-            cryptsetup luksOpen $DISKROOT lvm_root &&
-            echo 'encrypted root volume is ready' &&
-            sleep 2
         fi
         
 
@@ -56,10 +52,6 @@ function prepar_luks() {
             cryptsetup luksFormat $DISKDATA &&
             cryptsetup luksOpen $DISKDATA lvm_data &&
             echo 'encrypted data volume is ready'
-            sleep 2
-        else
-            cryptsetup luksOpen $DISKDATA lvm_data &&
-            echo 'encrypted data volume is ready' &&
             sleep 2
         fi
 
