@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Container
+Exec=/usr/bin/podlet
+Terminal=false
+Type=Application
+Icon=io.podman_desktop.PodmanDesktop
+Categories=Development;

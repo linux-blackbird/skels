@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Optimizer
+GenericName=tuned
+Comment=GTK GUI that can control TuneD daemon and provides simple profile editor
+Exec=/usr/bin/tuned-gui
+Icon=SuperSlicer
+Terminal=false
+Type=Application
+Categories=Settings;HardwareSettings;
+Version=1.0
+X-Desktop-File-Install-Version=0.28
