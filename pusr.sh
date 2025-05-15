@@ -32,12 +32,12 @@ function config_based() {
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    echo $PASSWORD | passwd lektor --stdin &&
+    echo $PASSWORD | passwd lektor &&
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
     echo 'lektor user created'
-    sleep 10
+    sleep 5
 }
 
 
@@ -45,28 +45,29 @@ function create_share() {
     mkdir /tmp/share &&
     useradd -d /tmp/share share && 
 
-    echo $PASSWORD | passwd share --stdin
+    echo $PASSWORD | passwd share 
     chown -R share:share /tmp/share
 
     echo 'share user created'
-    sleep 10
+    sleep 5
 }
 
 
 function create_users() { 
-    useradd -m $MAKEUSER &&
-    echo $PASSWORD | passwd $MAKEUSER --stdin &&
-    mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,model,video} &&
-    chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/* &&
-    usermod -aG share $MAKEUSER &&
-    setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
+    useradd -m $USERNAME &&
+    echo $PASSWORD | passwd $USERNAME  &&
+    mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,model,video} &&
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
+    usermod -aG share $USERNAME &&
+    setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
     echo 'custom user created'
-    sleep 10
+    sleep 5
 }
 
 
 function remove_roots() {
     passwd -l root
+     echo 'root account is locked'
 }
 
 config_based &&

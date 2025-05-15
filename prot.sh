@@ -90,7 +90,7 @@ function setup_vhosts() {
         pacman -S qemu-base libvirt virt-manager openbsd-netcat --noconfirm
         systemctl enable libvirtd.socket
         usermod -aG libvirt lektor
-        usermod -aG libvirt $MAKEUSER
+        usermod -aG libvirt $USERNAME
 
         mkdir /var/lib/libvirt/images/master
         mkdir /var/lib/libvirt/images/testing
