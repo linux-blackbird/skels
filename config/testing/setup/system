@@ -7,6 +7,73 @@ source /setup/protocol.sh
 sleep 1
 
 
+function config_based() {
+
+    ## create hostname
+    echo $HOSTNAME > /etc/hostname
+
+    ## create zoneinfo
+    ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
+    hwclock --systohc
+
+    ## config locales
+    printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
+    locale-gen && locale > /etc/locale.conf
+    sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
+
+    ## editor environment
+    echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+   
+}
+
+
+function create_admin() {
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+    useradd -m lektor && 
+    echo 'lektor:1511' | chpasswd
+    usermod -aG wheel lektor &&
+    mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
+    chown -R lektor:lektor /home/lektor/*
+    echo 'lektor user created'
+    sleep 2
+}
+
+
+function create_share() {
+
+    mkdir /tmp/share &&
+
+    useradd -d /tmp/share share && 
+    echo $PASSWORD | passwd --stdin share
+
+    chown -R share:share /tmp/share
+    echo 'share user created'
+    sleep 2
+}
+
+
+function create_users() { 
+
+    useradd -m $USERNAME &&
+    sleep 3
+    echo $PASSWORD | passwd $USERNAME --stdin 
+
+    mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
+    usermod -aG share $USERNAME &&
+    setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
+    echo 'custom user created'
+    sleep 2
+}
+
+
+function locking_root() {
+    passwd -l root
+    echo 'root account is locked'
+    sleep 2
+}
+
+
 function setup_kernel() {
    
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
@@ -22,8 +89,66 @@ function setup_kernel() {
 }
 
 
-function setup_desktp() {
-    /bin/bash /setup/desktop
+function install_aurs() {
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
+    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
+}
+
+
+function install_hypr() {
+
+    pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm 
+    sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
+
+    systemctl --global enable hyprpolkitagent
+    systemctl --global enable hypridle.service
+    systemctl --global enable waybar
+}
+
+
+function install_sddm() {
+    sudo pacman -S sddm --noconfirm &&
+    sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
+    sudo systemctl enable sddm
+}
+
+
+function install_icon() {
+    sudo pacman -S papirus-icon-theme --noconfirm &&
+    sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
+}
+
+
+function install_pkgs() {
+    pacman -S flatpak gnome-software --noconfirm &&
+    sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
+    sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
+    sudo flatpak override --env=GTK_THEME=blackbird
+    sudo flatpak override --env=ICON_THEME=Papirus-Dark
+}
+
+
+function install_devs() {
+    sudo chown root:root /opt/visual-studio-code/chrome-sandbox &&
+    sudo chmod 4775 /opt/visual-studio-code/chrome-sandbox
+}
+
+
+function install_brws() {
+    flatpak install --system --noninteractive org.mozilla.firefox &&
+    sudo -H -u lektor bash -c "yay -S google-chrome --noconfirm" yay -S
+}
+
+
+function install_play() {
+    pacman -S mpd mpc xfmpc --noconfirm > /dev/null &&
+}
+
+
+function install_note() {
+    pacman -S hugo obsidian --noconfirm > /dev/null &&
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 }
 
 
@@ -34,37 +159,33 @@ function setup_secure() {
     systemctl enable firewalld
 
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        pacman -S tang --noconfirm
-        systemctl enable tangd.socket
-    fi
+    pacman -S tang --noconfirm
+    systemctl enable tangd.socket
 
 
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
 
-        pacman -S apparmor --noconfirm
-        echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
-        systemctl enable apparmor.service
-    fi
-
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-
-        sudo pacman -S gnome-keyring libsecret seahorse keepassxc libpwquality --noconfirm
-        mkdir /home/lektor/.gnupg
+    pacman -S apparmor --noconfirm
+    echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
+    systemctl enable apparmor.service
 
 
-        echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
-        chown -R lektor:lektor /home/lektor/.gnupg
+
+    sudo pacman -S gnome-keyring libsecret seahorse keepassxc libpwquality --noconfirm
+    mkdir /home/lektor/.gnupg
 
 
-        sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
-        echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
+    echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
+    chown -R lektor:lektor /home/lektor/.gnupg
 
 
-        systemctl --global enable gnome-keyring-daemon.socket
-        systemctl --global enable  gcr-ssh-agent.socket
-    fi
+    sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
+    echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
+
+
+    systemctl --global enable gnome-keyring-daemon.socket
+    systemctl --global enable  gcr-ssh-agent.socket
+
 }
 
 
@@ -138,7 +259,36 @@ function setup_cleans() {
     mkinitcpio -P
 }
 
+
+config_based &&
+sleep 1
+create_admin &&
+sleep 1
+create_share &&
+sleep 1
+create_users &&
+sleep 1
+locking_root &&
+sleep 1
 setup_kernel &&
+sleep 1
+install_aurs &&
+sleep 1
+install_hypr &&
+sleep 1
+install_sddm &&
+sleep 1
+install_icon &&
+sleep 1
+install_pkgs &&
+sleep 1
+install_devs &&
+sleep 1
+install_brws &&
+sleep 1
+install_play &&
+sleep 1
+install_note &&
 sleep 1
 setup_secure &&
 sleep 1

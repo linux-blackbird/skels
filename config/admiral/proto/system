@@ -22,10 +22,6 @@ function setup_kernel() {
 }
 
 
-function setup_desktp() {
-    /bin/bash /setup/desktop
-}
-
 
 function setup_secure() {
 

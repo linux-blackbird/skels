@@ -330,10 +330,6 @@ function deploy_base() {
     genfstab -U /mnt/install/ > /mnt/install/etc/fstab 
     cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
     echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
-}
-
-
-function basics_init() {
 
     ## prepare post installation
     mkdir /mnt/install/setup
@@ -347,46 +343,24 @@ function basics_init() {
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
     sleep 2
 
-
-    ## prepare user env
-    cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
-    sleep 2
-    
-
-    ## based installation script
-    chmod +x /root/conf/post.sh
-    cp /root/conf/post.sh /mnt/install/setup/post.sh
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
-}
-
-
-function protoc_init() {
-
     ## migrate protocol configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
 
     ## protocol installation script
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/system'
+
 }
 
 
-function instal_main() {
-    prepar_luks &&
-    parted_root &&
-    parted_data && 
-    format_disk &&
-    mounts_disk &&
-    deploy_base &&
-    basics_init &&
-    protoc_init 
-}
 
+prepar_luks &&
+parted_root &&
+parted_data && 
+format_disk &&
+mounts_disk &&
+deploy_base 
 
-function instal_init() {
-    instal_main && sleep 2
-    ## umount -R /mnt/install
-    # reboot
-}
+# umount -R /mnt/install
+# reboot
 
-instal_init
 
