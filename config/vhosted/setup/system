@@ -92,13 +92,13 @@ sleep 5
 
 
 # aide file integrity
-echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
-yes | gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
-sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide'
-sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm'
-aide --init
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-sleep 5
+#echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+#yes | gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
+#sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide'
+#sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm'
+#aide --init
+#echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+#sleep 5
 
 
 ## systemd journal remote config
