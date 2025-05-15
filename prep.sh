@@ -393,8 +393,7 @@ function instal_main() {
     mounts_disk &&
     deploy_base &&
     migrat_base &&
-    migrat_prot &&
-    
+    migrat_prot 
 }
 
 
