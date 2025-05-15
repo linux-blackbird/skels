@@ -37,18 +37,17 @@ echo "lektor:1511" | chpasswd
 usermod -a -G wheel lektor
 echo 'lektor user created'
 
-
 ## lock root  user
 passwd -l root
 echo 'root account is locked'
-
+slep 1
 
 
 ## kernel config   
 echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
 echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
 echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
-  
+slep 1
 
 
 ## initram config 
@@ -56,17 +55,17 @@ mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
 rm /boot/initramfs-*
 bootctl --path=/boot/ install
 touch /etc/vconsole.conf
-
+slep 1
 
 
 # aide file integrity
 echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
-gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
+yes | gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
 sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide'
 sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm'
 aide --init
 echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-
+slep 1
 
 
 ## systemd journal remote config
@@ -83,33 +82,39 @@ systemctl enable tangd.socket
 ## apparmor config
 echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
 systemctl enable apparmor.service
+slep 1
 
 
 ## netboot config
 curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
 mv -f recovery.efi /boot/efi/rescue/
-
+slep 1
 
 ## vhost config
 systemctl enable libvirtd.socket
 usermod -aG libvirt lektor
+slep 1
 
 
 ## reflector config
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
+slep 1
 
 
 ## tunned config
 systemctl enable tuned-ppd
+tuned-adm profile virtual-host
+slep 1
 
 
 ## irg balanace config
 systemctl enable irqbalance.service
+slep 1
 
 
 ## networking
 ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-
+slep 1
 
 if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
     sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
@@ -120,7 +125,7 @@ fi
 
 systemctl enable systemd-networkd.socket
 systemctl enable systemd-resolved
-
+slep 1
 
 ## generate efi
 mkinitcpio -P
