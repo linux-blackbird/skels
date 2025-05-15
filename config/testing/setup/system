@@ -42,11 +42,11 @@ echo 'share user created'
 
 
 ## linux  user
-useradd -m $USERNAME &&
+useradd -m $USERNAME
 echo '1511' | passwd $USERNAME --stdin 
-mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
-chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
-usermod -aG share $USERNAME &&
+mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video}
+chown -R $USERNAME:$USERNAME /home/$USERNAME/*
+usermod -a -G share $USERNAME &&
 setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
 echo 'custom user created'
 
