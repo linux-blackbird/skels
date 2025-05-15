@@ -12,8 +12,8 @@ function setup_kernel() {
    
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm
-        echo "rd.luks.uuid=$(blkid -s UUID -o value /dev/$DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-        echo "data UUID=$(blkid -s UUID -o value /dev/$DISKDATA) none" >> /etc/crypttab
+        echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+        echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
         echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
     fi
 
