@@ -32,9 +32,9 @@ echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
 
 #admin user
 echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-useradd -m lektor && 
+useradd -m lektor
 echo "lektor:1511" | chpasswd
-usermod -a -G wheel lektor &&
+usermod -a -G wheel lektor
 echo 'lektor user created'
 
 
