@@ -55,7 +55,7 @@ function remove_roots() {
 
 function setup_kernel() {
    
-    if [[ $PROTOCOL == 'admiral' ]];then
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         echo "intel_iommu=on i915.fastboot=1" > /etc/cmdline.d/02-mods.conf
         yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode bubblewrap-suid --noconfirm
     fi
