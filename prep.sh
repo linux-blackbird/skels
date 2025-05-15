@@ -293,17 +293,17 @@ function mounts_disk() {
     fi
  
     ## pods mounting
-    if [[ ! -d /mnt/install/var/lib/libvirt/images ]]&&[[ ! -z $LVMDHOST ]];then
-        mkdir /mnt/install/var/lib /mnt/install/var/lib/libvirt /mnt/install/var/lib/libvirt/images &&
-        mount /dev/data/host /mnt/install/var/lib/libvirt/images &&
+    if [[ ! -d /mnt/install/var/lib/containers ]]&&[[ ! -z $LVMDPODS ]];then
+       mkdir /mnt/install/var/lib/containers &&
+        mount /dev/data/pods /mnt/install/var/lib/containers &&
         echo 'mount pods'
         sleep 1
     fi
 
     ## host mounting
-    if [[ ! -d /mnt/install/var/lib/containers ]]&&[[ ! -z $LVMDPODS ]];then
-        mkdir /mnt/install/var/lib/containers &&
-        mount /dev/data/pods /mnt/install/var/lib/containers &&
+    if [[ ! -d /mnt/install/var/lib/libvirt/images ]]&&[[ ! -z $LVMDHOST ]];then
+        mkdir /mnt/install/var/lib /mnt/install/var/lib/libvirt /mnt/install/var/lib/libvirt/images &&
+        mount /dev/data/host /mnt/install/var/lib/libvirt/images &&
         echo 'mount host'
         sleep 1
     fi
