@@ -28,6 +28,7 @@ function create_admin() {
     useradd -m lektor && usermod -aG wheel lektor
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
+    echo "1511" | passwd share --stdin
 }
 
 
@@ -42,7 +43,7 @@ function create_users() {
     useradd -m $MAKEUSER && usermod -aG wheel lektor
     mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,model,video}
     chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/*
-    chmod -aG share $MAKEUSERl
+    usermod -aG share $MAKEUSERl
     setfacl -Rm u:$MAKEUSERl:rwx /tmp/share
     setfacl -Rm u:$MAKEUSERl:rwx /var/lib/libvirt/images
 }
