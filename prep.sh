@@ -368,7 +368,7 @@ function migrat_base() {
 
     ## based installation script
     chmod +x /root/conf/pusr.sh
-    cp /root/conf/pusr.sh /mnt/install/setup/
+    cp /root/conf/pusr.sh /mnt/install/setup/pusr.sh
     arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/pusr.sh' 
 }
 

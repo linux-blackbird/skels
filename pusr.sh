@@ -68,3 +68,8 @@ function create_users() {
 function remove_roots() {
     passwd -l root
 }
+
+config_based &&
+create_admin &&
+create_share &&
+remove_roots 
