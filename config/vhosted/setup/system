@@ -110,7 +110,6 @@ systemctl enable tangd.socket
 
 
 ## apparmor config
-echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
 systemctl enable apparmor.service
 sleep 5
 
