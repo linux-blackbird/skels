@@ -80,32 +80,32 @@ function parted_root() {
         exit 1
     fi
 
-    if [[ ! -z $LVMPROOT ]];then
+    if [[ -z $LVMPROOT ]];then
         echo 'error : logical volume root size its not define at profile'
         exit 1
     fi
 
-    if [[ ! -z $LVMPVARS ]];then
+    if [[ -z $LVMPVARS ]];then
         echo 'error : logical volume vars size its not define at profile'
         exit 1
     fi
 
-    if [[ ! -z $LVMPVTMP ]];then
+    if [[ -z $LVMPVTMP ]];then
         echo 'error : logical volume vtmp size its not define at profile'
         exit 1
     fi
 
-    if [[ ! -z $LVMPVLOG ]];then
+    if [[ -z $LVMPVLOG ]];then
         echo 'error : logical volume vlog size its not define at profile'
         exit 1
     fi
 
-    if [[ ! -z $LVMPVAUD ]];then
+    if [[ -z $LVMPVAUD ]];then
         echo 'error : logical volume vaud size its not define at profile'
         exit 1
     fi
 
-    if [[ ! -z $LVMPSWAP ]];then
+    if [[ -z $LVMPSWAP ]];then
         echo 'error : logical volume swap size its not define at profile'
         exit 1
     fi
@@ -116,6 +116,7 @@ function parted_root() {
         vgcreate proc /dev/mapper/lvm_root
         echo 'proc volume group is created';
         sleep 1
+        
     fi
 
     if [[ ! -e /dev/proc/root  ]];then
