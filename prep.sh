@@ -33,7 +33,7 @@ source /root/conf/users/$USERNAME
 source /root/conf/protocol/$PROTOCOL
 
 ## fast reboot 
-read -p "Do you want reboot after installation : [y/n] " REBOOTNOW
+read -r -p "Do you want reboot after installation : [y/n] " REBOOTNOW
 
 
 
