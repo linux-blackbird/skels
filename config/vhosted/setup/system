@@ -40,6 +40,7 @@ if [[  -d /home/lektor ]];then
 else
     useradd -m lektor
 fi
+chown -R lektor:lektor /home/lektor
 usermod -a -G wheel lektor
 echo "lektor:1511" | chpasswd &&
 echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
