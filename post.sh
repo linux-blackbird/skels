@@ -58,7 +58,7 @@ function setup_kernel() {
     if [[ $PROTOCOL == 'admiral' ]];then
         echo "intel_iommu=on i915.fastboot=1" > /etc/cmdline.d/02-mods.conf
         yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode bubblewrap-suid --noconfirm
-    if
+    fi
 
     mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
     bootctl --path=/boot install
