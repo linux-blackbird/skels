@@ -248,6 +248,13 @@ function migrat_envi() {
 }
 
 
+function migrat_desk() {
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        cp /root/desktop/hyprland /mnt/install/desktop
+    fi
+}
+
 function instal_prep() {
     prepar_luks &&
     parted_root &&
@@ -256,6 +263,7 @@ function instal_prep() {
     mounts_disk &&
     deploy_base &&
     migrat_envi &&
+    migrat_desk &&
     arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh'    
 }
 

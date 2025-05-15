@@ -68,37 +68,126 @@ function setup_kernel() {
     echo "data UUID=$(blkid -s UUID -o value /dev/$DISKDATA) none" >> /etc/crypttab
 }
 
+function setup_desktp() {
+    /bin/bash /install/desktop
+}
+
 
 function setup_secure() {
-
-    pacman -S tang --noconfirm
-    systemctl enable tangd.socket
 
 
     pacman -S firewalld
     systemctl enable firewalld
 
 
-    pacman -S apparmor --noconfirm
-    echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
-    systemctl enable apparmor.service
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        pacman -S tang --noconfirm
+        systemctl enable tangd.socket
+    fi
 
 
-    sudo pacman -S gnome-keyring libsecret seahorse keepassxc libpwquality --noconfirm
-    mkdir /home/lektor/.gnupg
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+
+        pacman -S apparmor --noconfirm
+        echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
+        systemctl enable apparmor.service
+    fi
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+
+        sudo pacman -S gnome-keyring libsecret seahorse keepassxc libpwquality --noconfirm
+        mkdir /home/lektor/.gnupg
 
 
-    echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
-    chown -R lektor:lektor /home/lektor/.gnupg
+        echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
+        chown -R lektor:lektor /home/lektor/.gnupg
 
 
-    sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
-    echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
+        sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
+        echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
 
 
-    systemctl --global enable gnome-keyring-daemon.socket
-    systemctl --global enable  gcr-ssh-agent.socket
+        systemctl --global enable gnome-keyring-daemon.socket
+        systemctl --global enable  gcr-ssh-agent.socket
+    fi
 }
 
 
-## lanjutkan ke desktop
+function setup_mitiga() {
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        pacman -S rsync grsync --noconfirm
+    fi
+
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
+        mv -f recovery.efi /boot/efi/rescue/
+    fi
+
+}
+
+
+function setup_vhosts() {
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        pacman -S qemu-base libvirt virt-manager openbsd-netcat --noconfirm
+        systemctl enable libvirtd.socket
+        usermod -aG libvirt lektor
+        usermod -aG libvirt $MAKEUSER
+
+        mkdir /var/lib/libvirt/images/master
+        mkdir /var/lib/libvirt/images/testing
+        mkdir /var/lib/libvirt/images/publish
+    fi
+}
+
+
+function setup_podman() {
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        pacman -S podman crun fuse-overlayfs podman-desktop podman-docker podman-compose --noconfirm
+        chmod 4755 /opt/podman-desktop/chrome-sandbox 
+        chown -R root:root /opt/podman-desktop/chrome-sandbox
+        echo "unqualified-search-registries = ["docker.io"]" > /etc/containers/registries.conf.d/10-userspace-registries.conf 
+        git clone https://github.com/linux-blackbird/podlet.git /tmp/script
+        chmod +x /tmp/script/* 
+        cp /tmp/script/* /usr/bin
+    fi
+}
+
+
+function setup_tweaks() {
+    pacman -S reflector --noconfirm 
+    cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
+}
+
+
+function setup_tunned() {
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        pacman -S tuned tuned-ppd --noconfirm
+        systemctl enable tuned-ppd
+    fi
+
+
+    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
+        pacman -S irqbalance --noconfirm
+        systemctl enable irqbalance.service
+    fi
+}
+
+
+config_based &&
+create_admin &&
+create_share &&
+create_users &&
+remove_roots &&
+setup_kernel &&
+setup_secure &&
+setup_mitiga &&
+setup_vhosts &&
+setup_podman &&
+setup_tweaks &&
+setup_tunned

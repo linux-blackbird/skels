@@ -3,10 +3,12 @@
 
 echo 'lektor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/00_lektor
 
+
 function install_aurs() {
     sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' 
     sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm'
 }
+
 
 function install_hypr() {
     pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm
@@ -60,3 +62,14 @@ function install_play() {
 function install_note() {
     pacman -S hugo obsidian --noconfirm
 }
+
+
+install_aurs &&
+install_hypr &&
+install_sddm &&
+install_icon &&
+install_pkgs &&
+install_devs &&
+install_brws &&
+install_play &&
+install_note
