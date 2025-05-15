@@ -1,308 +1,187 @@
 #!/bin/bash
 
 
-
+## generate source
 source /setup/protocol.sh
-sleep 1
 
 
-config_based() {
+## create hostname
+echo $HOSTNAME > /etc/hostname
 
-    ## create hostname
-    echo $HOSTNAME > /etc/hostname
+## create zoneinfo
+ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
+hwclock --systohc
 
-    ## create zoneinfo
-    ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
-    hwclock --systohc
+## config locales
+printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
+locale-gen && locale > /etc/locale.conf
+sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
 
-    ## config locales
-    printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
-    locale-gen && locale > /etc/locale.conf
-    sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
-
-    ## editor environment
-    echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+## editor environment
+echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
 
 
-    #admin user
-    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-    useradd -m lektor && 
-    echo 'lektor:'$PASSWORD | chpasswd
-    usermod -aG wheel lektor &&
-    mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
-    chown -R lektor:lektor /home/lektor/*
-    echo 'lektor user created'
-    sleep 2
+#admin user
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+useradd -m lektor && 
+echo "lektor:$PASSWORD" | chpasswd
+usermod -aG wheel lektor &&
+mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
+chown -R lektor:lektor /home/lektor/*
+echo 'lektor user created'
 
 
-    ## share user
-    mkdir /tmp/share &&
-    useradd -d /tmp/share share && 
-    echo $PASSWORD | passwd --stdin share
-    chown -R share:share /tmp/share
-    echo 'share user created'
-    sleep 2
+
+## share user
+mkdir /tmp/share &&
+useradd -d /tmp/share share && 
+echo $PASSWORD | passwd --stdin share
+chown -R share:share /tmp/share
+echo 'share user created'
 
 
-    ## linux  user
-    useradd -m $USERNAME &&
-    sleep 3
-    echo $PASSWORD | passwd $USERNAME --stdin 
-    mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
-    chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
-    usermod -aG share $USERNAME &&
-    setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
-    echo 'custom user created'
-    sleep 2
+
+## linux  user
+useradd -m $USERNAME &&
+sleep 3
+echo $PASSWORD | passwd $USERNAME --stdin 
+mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
+chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
+usermod -aG share $USERNAME &&
+setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
+echo 'custom user created'
 
 
-    ## lock root  user
-    passwd -l root
-    echo 'root account is locked'
-    sleep 2
 
-   
-}
+## lock root  user
+passwd -l root
+echo 'root account is locked'
 
 
-setup_kernel() {
-   
-    yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm > /dev/null
-    echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-    echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
-    echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
+
+## kernel config   
+echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
+echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
   
 
-    mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
-    bootctl --path=/boot/ install
-    touch /etc/vconsole.conf
-}
 
+## initram config   
+mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
+bootctl --path=/boot/ install
+touch /etc/vconsole.conf
 
-install_aurs() {
-    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-    echo $PASSWORD | sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
-    echo $PASSWORD | sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
-}
 
 
-install_hypr() {
+# yay install
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
+sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 
-    pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm 
-    echo $PASSWORD | sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
 
-    systemctl --global enable hyprpolkitagent
-    systemctl --global enable hypridle.service
-    systemctl --global enable waybar
-}
 
+# aur package
+echo $PASSWORD | sudo -H -u lektor bash -c 'yay -S hyprshot visual-studio-code-bin google-chrome --noconfirm && yay -Yc' > /dev/null
 
-install_sddm() {
-    sudo pacman -S sddm --noconfirm &&
-    sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
-    sudo systemctl enable sddm
-}
 
 
-install_icon() {
-    sudo pacman -S papirus-icon-theme --noconfirm &&
-    sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
-}
+## hyprland
+systemctl --global enable hyprpolkitagent
+systemctl --global enable hypridle.service
+systemctl --global enable waybar
 
 
-install_pkgs() {
-    pacman -S flatpak gnome-software --noconfirm &&
-    echo $PASSWORD | sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
-    echo $PASSWORD | sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
-    flatpak override --env=GTK_THEME=blackbird
-    flatpak override --env=ICON_THEME=Papirus-Dark
-}
 
+# sddm
+sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
+sudo systemctl enable sddm
 
-install_devs() {
-    echo $PASSWORD | sudo -H -u lektor bash -c "yay -S visual-studio-code-bin --noconfirm"
-    chown root:root /opt/visual-studio-code/chrome-sandbox &&
-    chmod 4775 /opt/visual-studio-code/chrome-sandbox
-}
 
 
-install_brws() {
-    flatpak install --system --noninteractive org.mozilla.firefox &&
-    echo $PASSWORD | sudo -H -u lektor bash -c "yay -S google-chrome --noconfirm" yay -S
-}
+# icon
+sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
 
 
-install_play() {
-    pacman -S mpd mpc xfmpc --noconfirm 
-}
 
+# flatpak
+sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
+sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
+flatpak override --env=GTK_THEME=blackbird
+flatpak override --env=ICON_THEME=Papirus-Dark
 
-install_note() {
-    pacman -S hugo obsidian --noconfirm 
-    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-}
 
 
-setup_secure() {
+# firefox
+flatpak install --system --noninteractive org.mozilla.firefox &&
 
-    pacman -S firewalld --noconfirm
-    systemctl enable firewalld
 
 
-    pacman -S tang --noconfirm
-    systemctl enable tangd.socket
+# vscode
+chown root:root /opt/visual-studio-code/chrome-sandbox &&
+chmod 4775 /opt/visual-studio-code/chrome-sandbox
 
 
-    pacman -S apparmor --noconfirm
-    echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
-    systemctl enable apparmor.service
 
+## firewalld config
+systemctl enable firewalld
 
-    sudo pacman -S gnome-keyring libsecret seahorse keepassxc libpwquality --noconfirm
-    mkdir /home/lektor/.gnupg
 
 
-    echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
-    chown -R lektor:lektor /home/lektor/.gnupg
+## tangserver config
+systemctl enable tangd.socket
 
 
-    sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
-    echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
 
+## apparmor config
+echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
+systemctl enable apparmor.service
 
-    systemctl --global enable gnome-keyring-daemon.socket
-    systemctl --global enable  gcr-ssh-agent.socket
 
-}
 
+## gnome keyring
+mkdir /home/lektor/.gnupg
+echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
+chown -R lektor:lektor /home/lektor/.gnupg
+sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
+echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
+systemctl --global enable gnome-keyring-daemon.socket
+systemctl --global enable  gcr-ssh-agent.socket
 
-setup_mitiga() {
 
-    pacman -S rsync grsync --noconfirm
 
-    curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
-    mv -f recovery.efi /boot/efi/rescue/
-}
+## netboot config
+curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
+mv -f recovery.efi /boot/efi/rescue/
 
 
-setup_vhosts() {
 
-    pacman -S qemu-base libvirt virt-manager openbsd-netcat --noconfirm
-    systemctl enable libvirtd.socket
-    usermod -aG libvirt lektor
-    usermod -aG libvirt $USERNAME
-}
+## vhost config
+systemctl enable libvirtd.socket
+usermod -aG libvirt lektor
+usermod -aG libvirt $USERNAME
 
 
-setup_podman() {
 
-    pacman -S podman crun fuse-overlayfs podman-desktop podman-docker podman-compose --noconfirm
-    chmod 4755 /opt/podman-desktop/chrome-sandbox 
-    chown -R root:root /opt/podman-desktop/chrome-sandbox
-    echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/10-userspace-registries.conf 
-}
+## podman config
+chmod 4755 /opt/podman-desktop/chrome-sandbox 
+chown -R root:root /opt/podman-desktop/chrome-sandbox
+echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/10-userspace-registries.conf 
 
 
-setup_tweaks() {
-    pacman -S reflector --noconfirm 
-    cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
+## reflector config
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
-    pacman -S tuned tuned-ppd --noconfirm
-    systemctl enable tuned-ppd
 
 
-    pacman -S irqbalance --noconfirm
-    systemctl enable irqbalance.service
+## tunned config
+systemctl enable tuned-ppd
 
-}
 
 
-echo 'Start Config base'
-config_based &&
-sleep 1
-clear
+## irg balanace config
+systemctl enable irqbalance.service
 
 
-echo 'Setup kernel'
-setup_kernel &&
-sleep 1
-clear
 
-
-echo 'Setup Aurs'
-install_aurs &&
-sleep 1
-clear
-
-
-echo 'Setup Hyprland'
-install_hypr &&
-sleep 1
-clear
-
-echo 'Setup SDDM'
-install_sddm &&
-sleep 1
-clear
-
-echo 'Setup Icon'
-install_icon &&
-sleep 1
-clear
-
-echo 'Setup Sofware Center'
-install_pkgs &&
-sleep 1
-clear
-
-echo 'Setup Development Package'
-install_devs &&
-sleep 1
-clear
-
-
-echo 'Setup Browser Package'
-install_brws &&
-sleep 1
-clear
-
-echo 'Setup Media Player Package'
-install_play &&
-sleep 1
-clear
-
-echo 'Setup Office'
-install_note &&
-sleep 1
-clear
-
-echo 'Setup security'
-setup_secure &&
-sleep 1
-clear
-
-echo 'Setup recovery plan'
-setup_mitiga &&
-sleep 1
-clear
-
-echo 'Setup virtual host'
-setup_vhosts &&
-sleep 1
-clear
-
-
-echo 'Setup podman'
-setup_podman &&
-sleep 1
-clear
-
-echo 'Setup tweaking'
-setup_tweaks && 
-sleep 1
-clear
-
-echo 'Setup initramfs'
-mkinitcpio -P
-clear
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor

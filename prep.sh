@@ -346,7 +346,6 @@ function deploy_base() {
 }
 
 
-
 prepar_luks &&
 parted_root &&
 parted_data && 
