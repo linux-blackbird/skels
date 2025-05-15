@@ -317,6 +317,8 @@ function mounts_disk() {
 
 function deploy_base() {
 
+    reflector -f 5 -c id --save /etc/pacman.d/mirrorlist
+
     pacstrap /mnt/install/ $PACKBASE $PACKVARS
     genfstab -U /mnt/install/ > /mnt/install/etc/fstab 
     cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
