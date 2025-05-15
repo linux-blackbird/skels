@@ -201,11 +201,11 @@ function format_disk() {
         yes | mkfs.ext4 -b 4096 /dev/data/home > /dev/null
     fi
 
-    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/containers ]];then
+    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/containers ]]&&[[ ! -z $LVMDPODS ]];then
         mkfs.xfs -fs size=4096 /dev/data/pods > /dev/null
     fi
 
-    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/libvirt/images ]];then
+    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/libvirt/images ]]&&[[ ! -z $LVMDHOST ]];then
         mkfs.xfs -fs size=4096 /dev/data/host > /dev/null
     fi
 
