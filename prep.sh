@@ -342,7 +342,7 @@ function mounts_disk() {
 function deploy_base() {
 
     pacstrap /mnt/install/ $PACKBASE
-    genfstab -U /mnt > /mnt/install/etc/fstab 
+    genfstab -U /mnt/install/ > /mnt/install/etc/fstab 
     cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
     echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
 }
