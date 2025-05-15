@@ -209,18 +209,44 @@ function parted_data() {
 
 function format_disk() {
 
-    if [[ $PROCEDUR == 'install' ]];then
-        yes | mkfs.vfat -F32 -S 4096 -n BOOT $DISKBOOT &&
-        yes | mkfs.ext4 -b 4096 /dev/data/home &&
-        mkfs.xfs -fs size=4096 /dev/data/pods &&
+    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/boot ]];then
+        yes | mkfs.vfat -F32 -S 4096 -n BOOT $DISKBOOT
+    fi
+
+    if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/home ]];then
+        yes | mkfs.ext4 -b 4096 /dev/data/home
+    fi
+
+     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/containers ]];then
+        mkfs.xfs -fs size=4096 /dev/data/pods
+    fi
+
+     if [[ $PROCEDUR == 'install' ]]&&[[ ! -e /mnt/install/var/lib/libvirt/images ]];then
         mkfs.xfs -fs size=4096 /dev/data/host
     fi
 
-    yes | mkfs.ext4 -b 4096 /dev/proc/root &&
-    yes | mkfs.ext4 -b 4096 /dev/proc/vars &&
-    yes | mkfs.ext4 -b 4096 /dev/proc/vtmp &&
-    yes | mkfs.ext4 -b 4096 /dev/proc/vlog &&
-    yes | mkfs.ext4 -b 4096 /dev/proc/vaud &&
+    if [[ ! -e /mnt/install/ ]];then
+        yes | mkfs.ext4 -b 4096 /dev/proc/root &&
+    fi
+
+    if [[ ! -e /mnt/install/var ]];then
+        yes | mkfs.ext4 -b 4096 /dev/proc/vars &&
+    fi
+
+    if [[ ! -e /mnt/install/var/tmp ]];then
+        yes | mkfs.ext4 -b 4096 /dev/proc/vtmp &&
+    fi
+
+    if [[ ! -e /mnt/install/var/log ]];then
+        yes | mkfs.ext4 -b 4096 /dev/proc/vlog &&
+    fi
+
+
+    if [[ ! -e /mnt/install/var/audit ]];then
+        yes | mkfs.ext4 -b 4096 /dev/proc/vaud &&
+    fi
+
+    swapoff /dev/proc/swap
     yes | mkswap /dev/proc/swap 
 }
 
