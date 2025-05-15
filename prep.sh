@@ -269,9 +269,9 @@ function instal_main() {
 }
 
 
-function instal_init() {
+function instal_main() {
 
-    instal_main;
+    instal_init &&
 
     read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
 
@@ -281,7 +281,5 @@ function instal_init() {
     fi
 }
 
-
-instal_init;
-
+instal_main
 
