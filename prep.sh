@@ -157,22 +157,23 @@ function parted_data() {
 
     ## validation procedure
     if [[ $PROCEDUR == 'install' ]];then
+
          if [[ ! -e /dev/mapper/lvm_data ]];then
             echo 'error : logical volume data not found'
             exit 1
         fi
 
-        if [[ ! -z $LVMDHOME ]];then
+        if [[ -z $LVMDHOME ]];then
             echo 'error : logical volume home size its not define at profile'
             exit 1
         fi
 
-        if [[ ! -z $LVMDPODS ]];then
+        if [[ -z $LVMDPODS ]];then
             echo 'error : logical volume pods size its not define at profile'
             exit 1
         fi
 
-        if [[ ! -z $LVMDHOST ]];then
+        if [[ -z $LVMDHOST ]];then
             echo 'error : logical volume host size its not define at profile'
             exit 1
         fi
