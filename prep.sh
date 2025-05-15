@@ -349,11 +349,25 @@ function deploy_base() {
 
 
 function migrat_envi() {
+
+    ## prepare post installation
     mkdir /mnt/install/install
     chmod +x /root/conf/post.sh
+
+    ## post installation script
     cp /root/conf/post.sh /mnt/install/install
-    cp /root/conf/users/$USERNAME /mnt/install/install/user.sh 
-    cp /root/conf/protocol/$PROTOCOL /mnt/install/install/protcol.sh
+
+    ## create user env
+    cat /root/conf/users/$USERNAME > /mnt/install/install/user.sh 
+    cat /mnt/install/install/user.sh &&
+    sleep 2
+    
+    ## create protocol env
+    cat /root/conf/protocol/$PROTOCOL > /mnt/install/install/protocol.sh
+    cat /mnt/install/install/protocol.sh &&
+    sleep 2
+    
+    ## create based configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
 }
 

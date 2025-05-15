@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source /install/user.sh
-source /install/protcol.sh
+source /install/protocol.sh
 
 
 function config_based() {
