@@ -23,11 +23,9 @@ function config_based() {
 
     ## editor environment
     echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
-   
-}
 
 
-function create_admin() {
+    #admin user
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
     echo 'lektor:1511' | chpasswd
@@ -36,41 +34,35 @@ function create_admin() {
     chown -R lektor:lektor /home/lektor/*
     echo 'lektor user created'
     sleep 2
-}
 
 
-function create_share() {
-
+    ## share user
     mkdir /tmp/share &&
-
     useradd -d /tmp/share share && 
     echo $PASSWORD | passwd --stdin share
-
     chown -R share:share /tmp/share
     echo 'share user created'
     sleep 2
-}
 
 
-function create_users() { 
-
+    ## linux  user
     useradd -m $USERNAME &&
     sleep 3
     echo $PASSWORD | passwd $USERNAME --stdin 
-
     mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video} &&
     chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
     usermod -aG share $USERNAME &&
     setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
     echo 'custom user created'
     sleep 2
-}
 
 
-function locking_root() {
+    ## lock root  user
     passwd -l root
     echo 'root account is locked'
     sleep 2
+
+   
 }
 
 
@@ -255,28 +247,6 @@ config_based &&
 sleep 1
 clear
 
-echo 'Start Config Admin'
-create_admin &&
-sleep 1
-clear
-
-
-echo 'Start Config User Share'
-create_share &&
-sleep 1
-clear
-
-
-echo 'Start Config Linux User'
-create_users &&
-sleep 1
-clear
-
-
-echo 'Locking Root User'
-locking_root &&
-sleep 1
-clear
 
 echo 'Setup kernel'
 setup_kernel &&
