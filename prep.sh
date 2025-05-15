@@ -40,41 +40,46 @@ function prepar_luks() {
         cryptsetup luksFormat $DISKVAUL &&
         sleep 2
         
-
         if [[ ! -e /dev/mapper/lvm_root  ]];then
             cryptsetup luksFormat $DISKROOT &&
-            cryptsetup luksOpen $DISKROOT lvm_root
+            cryptsetup luksOpen $DISKROOT lvm_root &&
+            echo 'encrypted root volume is ready'
             sleep 2
         else
-            cryptsetup luksOpen $DISKROOT lvm_root
+            cryptsetup luksOpen $DISKROOT lvm_root &&
+            echo 'encrypted root volume is ready' &&
             sleep 2
         fi
         
 
         if [[ ! -e /dev/mapper/lvm_data  ]];then
-            cryptsetup luksFormat $DISKDATA
-            cryptsetup luksOpen $DISKDATA lvm_data
+            cryptsetup luksFormat $DISKDATA &&
+            cryptsetup luksOpen $DISKDATA lvm_data &&
+            echo 'encrypted data volume is ready'
             sleep 2
         else
-            cryptsetup luksOpen $DISKDATA lvm_data
+            cryptsetup luksOpen $DISKDATA lvm_data &&
+            echo 'encrypted data volume is ready' &&
             sleep 2
         fi
 
     else
 
         if [[ -e /dev/mapper/lvm_root  ]];then
-            cryptsetup luksOpen $DISKROOT lvm_root
+            cryptsetup luksOpen $DISKROOT lvm_root &&
+            echo 'encrypted root volume is ready' &&
             sleep 2
         else
-            echo 'error : lvm_root volume not found'
+            echo 'error : lvm_root volume not found' &&
             exit 1
         fi
 
         if [[ -e /dev/mapper/lvm_data  ]];then
-            cryptsetup luksOpen $DISKDATA lvm_data
+            cryptsetup luksOpen $DISKDATA lvm_data &&
+            echo 'encrypted data volume is ready' &&
             sleep 2
         else
-            echo 'error : lvm_data volume not found'
+            echo 'error : lvm_data volume not found' &&
             exit 1
         fi
     fi
@@ -83,79 +88,139 @@ function prepar_luks() {
 
 function parted_root() {
 
-    if [[ $PROCEDUR == "install"  ]];then
+    ## validation procedure
+    if [[ ! -e /dev/mapper/lvm_root ]];then
+        echo 'error : lvm_root partition not found'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | pvcreate /dev/mapper/lvm_root &&
-            sleep 2
-        fi
+    if [[ ! -z $LVMPROOT ]];then
+        echo 'error : logical volume root size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | vgcreate proc /dev/mapper/lvm_root &&
-            sleep 2
-        fi
+    if [[ ! -z $LVMPVARS ]];then
+        echo 'error : logical volume vars size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | lvcreate -L $LVMPROOT proc -n root &&
-            sleep 2
-        fi
+    if [[ ! -z $LVMPVTMP ]];then
+        echo 'error : logical volume vtmp size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | lvcreate -L $LVMPVARS proc -n vars &&
-            sleep 2
-        fi
+    if [[ ! -z $LVMPVLOG ]];then
+        echo 'error : logical volume vlog size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
-            sleep 2
-        fi
+    if [[ ! -z $LVMPVAUD ]];then
+        echo 'error : logical volume vaud size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | lvcreate -L $LVMPVTMP proc -n vlog &&
-            sleep 2
-        fi 
+    if [[ ! -z $LVMPSWAP ]];then
+        echo 'error : logical volume swap size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | lvcreate -L $LVMPVAUD proc -n vaud &&
-            sleep 2
-        fi
+    ## create logical volume
+    if [[ ! -d /dev/proc ]];then
+        pvcreate /dev/mapper/lvm_root
+        vgcreate proc /dev/mapper/lvm_root
+        echo 'proc volume group is created';
+        sleep 1
+    fi
 
-        if [[ ! -e /dev/data/host  ]];then
-            yes | lvcreate -l100%FREE proc -n swap
-            sleep 2
-        fi
+    if [[ ! -e /dev/proc/root  ]];then
+        yes | lvcreate -L $LVMPROOT proc -n root &&
+        echo 'root logical volume is created';
+        sleep 1
+    fi
+
+    if [[ ! -e /dev/proc/vars ]];then
+        yes | lvcreate -L $LVMPVARS proc -n vars &&
+        echo 'var logical volume is created';
+        sleep 1
+    fi
+
+    if [[ ! -e /dev/proc/vtmp ]];then
+        yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
+        echo 'var/tmp logical volume is created';
+        sleep 1
+    fi
+
+    if [[ ! -e /dev/proc/vlog ]];then
+        yes | lvcreate -L $LVMPVTMP proc -n vlog &&
+        echo 'var/log logical volume is created';
+        sleep 1
+    fi 
+
+    if [[ ! -e /dev/proc/vaud ]];then
+        yes | lvcreate -L $LVMPVAUD proc -n vaud &&
+        echo 'var/log/audit logical volume is created';
+        sleep 1
+    fi
+
+    if [[ ! -e /dev/proc/swap ]];then
+        yes | lvcreate -l100%FREE proc -n swap
+        echo 'swap logical volume is created';
+        sleep 1
     fi
 }
 
 
 function parted_data() {
 
+    ## validation procedure
+    if [[ $PROCEDUR != 'install' ]];then
+        return;
+    fi
 
-    if [[ $PROCEDUR == 'install' ]];then
+    if [[ ! -e /dev/mapper/lvm_data ]];then
+        echo 'error : logical volume data not found'
+        exit 1
+    fi
 
-        if [[ ! -e /dev/mapper/lvm_data  ]];then
-            pvcreate /dev/mapper/lvm_data
-            vgcreate data /dev/mapper/lvm_data
-        fi
+    if [[ ! -z $LVMDHOME ]];then
+        echo 'error : logical volume home size its not define at profile'
+        exit 1
+    fi
 
-       
-        if [[ ! -z $LVMDHOME ]];then
-            if [[ ! -e /dev/data/home  ]];then
-                yes | lvcreate -L $LVMDHOME data -n home
-            fi
-        fi
+    if [[ ! -z $LVMDPODS ]];then
+        echo 'error : logical volume pods size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -z $LVMDPODS ]];then
-            if [[ ! -e /dev/data/pods  ]];then
-                yes | lvcreate -L $LVMDPODS data -n pods
-            fi
-        fi
+    if [[ ! -z $LVMDHOST ]];then
+        echo 'error : logical volume host size its not define at profile'
+        exit 1
+    fi
 
-        if [[ ! -z $LVMDHOST ]];then
-            if [[ ! -e /dev/data/host  ]];then
-                yes | lvcreate -l $LVMDHOST data -n host
-            fi
-        fi
+
+    ## create logical volume
+    if [[ ! -e /dev/data  ]];then
+        pvcreate /dev/mapper/lvm_data
+        vgcreate data /dev/mapper/lvm_data
+        echo 'lvm_data partition is created';
+    fi
+  
+    if [[ ! -e /dev/data/home  ]];then
+        yes | lvcreate -L $LVMDHOME data -n home
+        echo 'home logical volume is created';
+        sleep 1
+    fi
+
+    if [[ ! -e /dev/data/pods ]];then
+        yes | lvcreate -L $LVMDPODS data -n pods
+        echo 'pods logical volume is created';
+        sleep 1
+    fi
+
+    if [[ ! -e /dev/data/host  ]];then
+        yes | lvcreate -l $LVMDHOST data -n host
+        echo 'host logical volume is created';
+        sleep 1
     fi
 }
 
