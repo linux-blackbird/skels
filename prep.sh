@@ -352,16 +352,19 @@ function migrat_envi() {
 
     ## prepare post installation
     mkdir /mnt/install/setup
-    chmod +x /root/conf/post.sh
+
 
     ## post installation script
+    chmod +x /root/conf/post.sh
     cp /root/conf/post.sh /mnt/install/setup
+
 
     ## create user env
     cat /root/conf/users/$USERNAME > /mnt/install/setup/user.sh 
     cat /mnt/install/setup/user.sh &&
     sleep 2
     
+
     ## create protocol env
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
     cat /mnt/install/setup/protocol.sh &&
@@ -388,7 +391,7 @@ function instal_main() {
     deploy_base &&
     migrat_envi &&
     migrat_desk &&
-    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /install/post.sh' 
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /setup/post.sh' 
 }
 
 
