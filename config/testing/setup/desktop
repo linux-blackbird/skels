@@ -10,14 +10,14 @@ echo 'lektor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/00_lektor
 
 
 function install_aurs() {
-    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' 
-    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm'
+    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
+    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 }
 
 
 function install_hypr() {
-    pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm
-    sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' 
+    pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm > /dev/null
+    sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
 
     systemctl --global enable hyprpolkitagent
     systemctl --global enable hypridle.service
@@ -26,20 +26,20 @@ function install_hypr() {
 
 
 function install_sddm() {
-    sudo pacman -S sddm --noconfirm
+    sudo pacman -S sddm --noconfirm > /dev/null
     sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
     sudo systemctl enable sddm
 }
 
 
 function install_icon() {
-    sudo pacman -S papirus-icon-theme --noconfirm
+    sudo pacman -S papirus-icon-theme --noconfirm > /dev/null
     sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
 }
 
 
 function install_pkgs() {
-    pacman -S flatpak gnome-software --noconfirm
+    pacman -S flatpak gnome-software --noconfirm > /dev/null
     sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
     sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
     sudo flatpak override --env=GTK_THEME=blackbird
@@ -60,12 +60,12 @@ function install_brws() {
 
 
 function install_play() {
-    pacman -S mpd mpc xfmpc --noconfirm
+    pacman -S mpd mpc xfmpc --noconfirm > /dev/null
 }
 
 
 function install_note() {
-    pacman -S hugo obsidian --noconfirm
+    pacman -S hugo obsidian --noconfirm > /dev/null
 }
 
 

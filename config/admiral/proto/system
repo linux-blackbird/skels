@@ -142,6 +142,8 @@ setup_kernel &&
 sleep 1
 setup_secure &&
 sleep 1
+setup_desktp &&
+sleep 1
 setup_mitiga &&
 sleep 1
 setup_vhosts &&
