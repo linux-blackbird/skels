@@ -9,8 +9,6 @@ sleep 1
 
 
 
-
-
 function setup_kernel() {
    
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
