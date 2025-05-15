@@ -1,6 +1,6 @@
 MAKEUSER="servero"
-PROTOCOL="servero"
-USERPACK="servero"
+PROTOCOL="vhosted"
+USERPACK="vhosted"
 NETSIPV4="10.10.1.10/24"
 NETSGATE="10.10.1.1"
 NETSDNSS="10.10.1.1 8.8.8.8"
