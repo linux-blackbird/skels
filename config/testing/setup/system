@@ -46,12 +46,12 @@ echo 'share user created'
 
 
 ## linux  user
-useradd -m $USERNAME
-echo '1511' | passwd $USERNAME --stdin 
-mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,template,video}
-chown -R $USERNAME:$USERNAME /home/$USERNAME/*
-usermod -a -G share $USERNAME &&
-setfacl -Rm u:$USERNAME:rwx /var/lib/libvirt/images &&
+useradd -m $MAKEUSER
+echo '1511' | passwd $MAKEUSER --stdin 
+mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,template,video}
+chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/*
+usermod -a -G share $MAKEUSER &&
+setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
 echo 'custom user created'
 
 
@@ -161,7 +161,7 @@ mv -f recovery.efi /boot/efi/rescue/
 ## vhost config
 systemctl enable libvirtd.socket
 usermod -aG libvirt lektor
-usermod -aG libvirt $USERNAME
+usermod -aG libvirt $MAKEUSER
 
 
 
@@ -185,6 +185,7 @@ systemctl enable tuned-ppd
 ## irg balanace config
 systemctl enable irqbalance.service
 
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/
 
 
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+mkinitcpio -P
