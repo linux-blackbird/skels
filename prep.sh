@@ -228,57 +228,75 @@ function format_disk() {
 function mounts_disk() {
 
     ## root mounting
-    mount /dev/proc/root /mnt &&
-    echo 'mount root'
-    sleep 1
+    if [[ ! -e /mnt/install/ ]];then
+        mount /dev/proc/root /mnt/install/ &&
+        echo 'mount root'
+        sleep 1
+    fi
 
     ## boot mounting
-    mkdir /mnt/boot &&
-    mount -o uid=0,gid=0,fmask=0077,dmask=0077 $DISKBOOT /mnt/boot &&
-    echo 'mount boot'
-    sleep 1
+    if [[ ! -e /mnt/install/boot ]];then
+        mkdir /mnt/install/boot &&
+        mount -o uid=0,gid=0,fmask=0077,dmask=0077 $DISKBOOT /mnt/install/boot &&
+        echo 'mount boot'
+        sleep 1
+    fi
 
     ## vars mounting
-    mkdir /mnt/var &&
-    mount /dev/proc/vars /mnt/var &&
-    echo 'mount vars'
-    sleep 1
+    if [[ ! -e /mnt/install/var ]];then
+        mkdir /mnt/install/var &&
+        mount /dev/proc/vars /mnt/install/var &&
+        echo 'mount vars'
+        sleep 1
+    fi
 
     ## vtmp mounting
-    mkdir /mnt/var/tmp &&
-    mount /dev/proc/vtmp /mnt/var/tmp &&
-    echo 'mount vtmp'
-    sleep 1
+    if [[ ! -e /mnt/install/var/tmp ]];then
+        mkdir /mnt/install/var/tmp &&
+        mount /dev/proc/vtmp /mnt/install/var/tmp &&
+        echo 'mount vtmp'
+        sleep 1
+    fi
 
     ## vlog mounting
-    mkdir /mnt/var/log &&
-    mount /dev/proc/vlog /mnt/var/log &&
-    echo 'mount vlog'
-    sleep 1
+    if [[ ! -e /mnt/install/var/log ]];then
+        mkdir /mnt/install/var/log &&
+        mount /dev/proc/vlog /mnt/install/var/log &&
+        echo 'mount vlog'
+        sleep 1
+    fi
 
     ## vaud mounting
-    mkdir /mnt/var/log/audit &&
-    mount /dev/proc/vaud /mnt/var/log/audit &&
-    echo 'mount vaud'
-    sleep 1
+    if [[ ! -e /mnt/install/var/log/audit ]];then
+        mkdir /mnt/install/var/log/audit &&
+        mount /dev/proc/vaud /mnt/install/var/log/audit &&
+        echo 'mount vaud'
+        sleep 1
+    fi
 
     ## home mounting
-    mkdir /mnt/home &&
-    mount /dev/data/home /mnt/home &&
-    echo 'mount home'
-    sleep 1
+    if [[ ! -e /mnt/install/home ]];then
+        mkdir /mnt/install/home &&
+        mount /dev/data/home /mnt/install/home &&
+        echo 'mount home'
+        sleep 1
+    fi
  
     ## pods mounting
-    mkdir /mnt/var/lib /mnt/var/lib/libvirt /mnt/var/lib/libvirt/images &&
-    mount /dev/data/host /mnt/var/lib/libvirt/images &&
-    echo 'mount pods'
-    sleep 1
+    if [[ ! -e /mnt/install/var/lib/libvirt/images ]];then
+        mkdir /mnt/install/var/lib /mnt/install/var/lib/libvirt /mnt/install/var/lib/libvirt/images &&
+        mount /dev/data/host /mnt/install/var/lib/libvirt/images &&
+        echo 'mount pods'
+        sleep 1
+    fi
 
     ## host mounting
-    mkdir /mnt/var/lib/containers &&
-    mount /dev/data/pods /mnt/var/lib/containers &&
-    echo 'mount host'
-    sleep 1
+    if [[ ! -e /mnt/install/var/lib/containers ]];then
+        mkdir /mnt/install/var/lib/containers &&
+        mount /dev/data/pods /mnt/install/var/lib/containers &&
+        echo 'mount host'
+        sleep 1
+    fi
 
     ## swap mounting
     swapon /dev/proc/swap
@@ -289,27 +307,27 @@ function mounts_disk() {
 
 function deploy_base() {
 
-    pacstrap /mnt $PACKBASE
-    genfstab -U /mnt > /mnt/etc/fstab 
-    cp /etc/systemd/network/* /mnt/etc/systemd/network/
-    echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/etc/fstab
+    pacstrap /mnt/install/ $PACKBASE
+    genfstab -U /mnt > /mnt/install/etc/fstab 
+    cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
+    echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
 }
 
 
 function migrat_envi() {
-    mkdir /mnt/install
+    mkdir /mnt/install/install
     chmod +x /root/conf/post.sh
-    cp /root/conf/post.sh /mnt/install
-    cp /root/conf/users/$USERNAME /mnt/install/userenv 
-    cp /root/conf/protocol/$PROTOCOL /mnt/install/protcolenv
-    cp -fr /root/conf/config/$PROTOCOL/* /mnt
+    cp /root/conf/post.sh /mnt/install/install
+    cp /root/conf/users/$USERNAME /mnt/install/install/userenv 
+    cp /root/conf/protocol/$PROTOCOL /mnt/install/install/protcolenv
+    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
 }
 
 
 function migrat_desk() {
 
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        cp /root/conf/desktop/hyprland /mnt/install/desktop
+        cp /root/conf/desktop/hyprland /mnt/install/install/desktop
     fi
 }
 
@@ -323,7 +341,7 @@ function instal_main() {
     deploy_base &&
     migrat_envi &&
     migrat_desk &&
-    arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh' 
+    arch-chroot /mnt/install/ /bin/sh -c '/bin/sh /install/post.sh' 
 }
 
 
