@@ -1,7 +1,6 @@
 #!/bin/bash
 
-source /setup/user.sh
-sleep 1
+
 
 source /setup/protocol.sh
 sleep 1

@@ -332,13 +332,10 @@ function deploy_base() {
     echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
 
 
-    ## prepare post installation
-    mkdir /mnt/install/setup
-
-
     ## prepare protocol env
     cat /root/conf/protocol/$PROTOCOL > /mnt/install/setup/protocol.sh
-    sleep 2
+    cat /root/conf/users/$USERNAME >> /mnt/install/setup/protocol.sh
+
 
     ## migrate protocol configuration
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
