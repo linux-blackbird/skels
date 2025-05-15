@@ -27,7 +27,7 @@ config_based() {
     #admin user
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    echo 'lektor:1511' | chpasswd
+    echo 'lektor:'$PASSWORD | chpasswd
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
     chown -R lektor:lektor /home/lektor/*
@@ -67,12 +67,11 @@ config_based() {
 
 setup_kernel() {
    
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm > /dev/null
-        echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-        echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
-        echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
-    fi
+    yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm > /dev/null
+    echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+    echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
+    echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
+  
 
     mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
     bootctl --path=/boot/ install
@@ -82,15 +81,15 @@ setup_kernel() {
 
 install_aurs() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
-    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
+    echo $PASSWORD | sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
+    echo $PASSWORD | sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 }
 
 
 install_hypr() {
 
     pacman -S uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap --noconfirm 
-    sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
+    echo $PASSWORD | sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
 
     systemctl --global enable hyprpolkitagent
     systemctl --global enable hypridle.service
@@ -113,22 +112,23 @@ install_icon() {
 
 install_pkgs() {
     pacman -S flatpak gnome-software --noconfirm &&
-    sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
-    sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
-    sudo flatpak override --env=GTK_THEME=blackbird
-    sudo flatpak override --env=ICON_THEME=Papirus-Dark
+    echo $PASSWORD | sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
+    echo $PASSWORD | sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
+    flatpak override --env=GTK_THEME=blackbird
+    flatpak override --env=ICON_THEME=Papirus-Dark
 }
 
 
 install_devs() {
-    sudo chown root:root /opt/visual-studio-code/chrome-sandbox &&
-    sudo chmod 4775 /opt/visual-studio-code/chrome-sandbox
+    echo $PASSWORD | sudo -H -u lektor bash -c "yay -S visual-studio-code-bin --noconfirm"
+    chown root:root /opt/visual-studio-code/chrome-sandbox &&
+    chmod 4775 /opt/visual-studio-code/chrome-sandbox
 }
 
 
 install_brws() {
     flatpak install --system --noninteractive org.mozilla.firefox &&
-    sudo -H -u lektor bash -c "yay -S google-chrome --noconfirm" yay -S
+    echo $PASSWORD | sudo -H -u lektor bash -c "yay -S google-chrome --noconfirm" yay -S
 }
 
 
@@ -145,7 +145,6 @@ install_note() {
 
 setup_secure() {
 
-
     pacman -S firewalld --noconfirm
     systemctl enable firewalld
 
@@ -154,12 +153,9 @@ setup_secure() {
     systemctl enable tangd.socket
 
 
-
-
     pacman -S apparmor --noconfirm
     echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
     systemctl enable apparmor.service
-
 
 
     sudo pacman -S gnome-keyring libsecret seahorse keepassxc libpwquality --noconfirm
@@ -182,45 +178,28 @@ setup_secure() {
 
 setup_mitiga() {
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        pacman -S rsync grsync --noconfirm
-    fi
+    pacman -S rsync grsync --noconfirm
 
-
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
-        mv -f recovery.efi /boot/efi/rescue/
-    fi
-
+    curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
+    mv -f recovery.efi /boot/efi/rescue/
 }
 
 
 setup_vhosts() {
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        pacman -S qemu-base libvirt virt-manager openbsd-netcat --noconfirm
-        systemctl enable libvirtd.socket
-        usermod -aG libvirt lektor
-        usermod -aG libvirt $USERNAME
-
-        mkdir /var/lib/libvirt/images/master
-        mkdir /var/lib/libvirt/images/testing
-        mkdir /var/lib/libvirt/images/publish
-    fi
+    pacman -S qemu-base libvirt virt-manager openbsd-netcat --noconfirm
+    systemctl enable libvirtd.socket
+    usermod -aG libvirt lektor
+    usermod -aG libvirt $USERNAME
 }
 
 
 setup_podman() {
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        pacman -S podman crun fuse-overlayfs podman-desktop podman-docker podman-compose --noconfirm
-        chmod 4755 /opt/podman-desktop/chrome-sandbox 
-        chown -R root:root /opt/podman-desktop/chrome-sandbox
-        echo "unqualified-search-registries = ["docker.io"]" > /etc/containers/registries.conf.d/10-userspace-registries.conf 
-        git clone https://github.com/linux-blackbird/podlet.git /tmp/script
-        chmod +x /tmp/script/* 
-        cp /tmp/script/* /usr/bin
-    fi
+    pacman -S podman crun fuse-overlayfs podman-desktop podman-docker podman-compose --noconfirm
+    chmod 4755 /opt/podman-desktop/chrome-sandbox 
+    chown -R root:root /opt/podman-desktop/chrome-sandbox
+    echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/10-userspace-registries.conf 
 }
 
 
@@ -228,16 +207,14 @@ setup_tweaks() {
     pacman -S reflector --noconfirm 
     cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        pacman -S tuned tuned-ppd --noconfirm
-        systemctl enable tuned-ppd
-    fi
+
+    pacman -S tuned tuned-ppd --noconfirm
+    systemctl enable tuned-ppd
 
 
-    if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
-        pacman -S irqbalance --noconfirm
-        systemctl enable irqbalance.service
-    fi
+    pacman -S irqbalance --noconfirm
+    systemctl enable irqbalance.service
+
 }
 
 
