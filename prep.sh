@@ -352,14 +352,13 @@ function migrat_envi() {
     mkdir /mnt/install/install
     chmod +x /root/conf/post.sh
     cp /root/conf/post.sh /mnt/install/install
-    cp /root/conf/users/$USERNAME /mnt/install/install/userenv 
-    cp /root/conf/protocol/$PROTOCOL /mnt/install/install/protcolenv
+    cp /root/conf/users/$USERNAME /mnt/install/install/user.sh 
+    cp /root/conf/protocol/$PROTOCOL /mnt/install/install/protcol.sh
     cp -fr /root/conf/config/$PROTOCOL/* /mnt/install/
 }
 
 
 function migrat_desk() {
-
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         cp /root/conf/desktop/hyprland /mnt/install/install/desktop
     fi

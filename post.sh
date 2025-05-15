@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /install/userenv
-source /install/protcolenv
+source /install/user.sh
+source /install/protcol.sh
 
 
 function config_based() {
@@ -26,7 +26,7 @@ function config_based() {
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    echo "1511" | passwd lektor --stdin
+    echo "1511" | passwd lektor --stdin &&
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
@@ -59,7 +59,6 @@ function remove_roots() {
 
 function setup_kernel() {
    
-
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         yes | pacman -S linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid --noconfirm
         echo "rd.luks.uuid=$(blkid -s UUID -o value /dev/$DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
