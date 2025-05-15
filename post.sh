@@ -30,7 +30,7 @@ function config_based() {
 function create_admin() {
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
     useradd -m lektor && 
-    echo -e "$PASSWORD\n$PASSWORD" | passwd lektor
+    passwd lektor
     usermod -aG wheel lektor &&
     mkdir /home/lektor/{dekstop,download,image,audio,project,share,model,video}
     chown -R lektor:lektor /home/lektor/*
@@ -40,9 +40,16 @@ function create_admin() {
 
 
 function create_share() {
+
+    SHAREPWD=$(echo $PASSWORD | md5sum | cut -c1-8)
+
     mkdir /tmp/share &&
+
+
     useradd -d /tmp/share share && 
-    echo -e "$PASSWORD\n$PASSWORD" | passwd share
+    echo $SHAREPWD | passwd --stdin $USERNAME
+
+
     chown -R share:share /tmp/share
     echo 'share user created'
     sleep 5
@@ -50,8 +57,12 @@ function create_share() {
 
 
 function create_users() { 
+
+    USERSPWD=$(echo $PASSWORD | md5sum | cut -c1-8)
+
     useradd -m $USERNAME &&
-    echo -e "$PASSWORD\n$PASSWORD" | passwd $USERNAME
+    echo $USERSPWD | passwd --stdin $USERNAME
+
     mkdir /home/$USERNAME/{dekstop,download,image,audio,project,share,model,video} &&
     chown -R $USERNAME:$USERNAME /home/$USERNAME/* &&
     usermod -aG share $USERNAME &&
