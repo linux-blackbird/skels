@@ -331,12 +331,9 @@ function deploy_base() {
     cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
     echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
 
+
     ## prepare post installation
     mkdir /mnt/install/setup
-
-
-    ## migrate based configuration
-    cp -fr /root/conf/config/general/* /mnt/install/
 
 
     ## prepare protocol env
