@@ -236,10 +236,6 @@ function setup_podman() {
 function setup_tweaks() {
     pacman -S reflector --noconfirm 
     cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
-}
-
-
-function setup_tunned() {
 
     if [[ $PROTOCOL == "testing" ]]||[[ $PROTOCOL == 'admiral' ]];then
         pacman -S tuned tuned-ppd --noconfirm
@@ -254,53 +250,113 @@ function setup_tunned() {
 }
 
 
-function setup_cleans() {
-    # rm -fr /install &&
-    mkinitcpio -P
-}
-
-
+echo 'Start Config base'
 config_based &&
 sleep 1
+clear
+
+echo 'Start Config Admin'
 create_admin &&
 sleep 1
+clear
+
+
+echo 'Start Config User Share'
 create_share &&
 sleep 1
+clear
+
+
+echo 'Start Config Linux User'
 create_users &&
 sleep 1
+clear
+
+
+echo 'Locking Root User'
 locking_root &&
 sleep 1
+clear
+
+echo 'Setup kernel'
 setup_kernel &&
 sleep 1
+clear
+
+
+echo 'Setup Aurs'
 install_aurs &&
 sleep 1
+clear
+
+
+echo 'Setup Hyprland'
 install_hypr &&
 sleep 1
+clear
+
+echo 'Setup SDDM'
 install_sddm &&
 sleep 1
+clear
+
+echo 'Setup Icon'
 install_icon &&
 sleep 1
+clear
+
+echo 'Setup Sofware Center'
 install_pkgs &&
 sleep 1
+clear
+
+echo 'Setup Development Package'
 install_devs &&
 sleep 1
+clear
+
+
+echo 'Setup Browser Package'
 install_brws &&
 sleep 1
+clear
+
+echo 'Setup Media Player Package'
 install_play &&
 sleep 1
+clear
+
+echo 'Setup Office'
 install_note &&
 sleep 1
+clear
+
+echo 'Setup security'
 setup_secure &&
 sleep 1
+clear
+
+echo 'Setup recovery plan'
 setup_mitiga &&
 sleep 1
+clear
+
+echo 'Setup virtual host'
 setup_vhosts &&
 sleep 1
+clear
+
+
+echo 'Setup podman'
 setup_podman &&
 sleep 1
+clear
+
+echo 'Setup tweaking'
 setup_tweaks && 
 sleep 1
-setup_tunned &&
-sleep 1
-setup_cleans &&
-sleep 1
+clear
+
+echo 'Setup initramfs'
+mkinitcpio -P
+clear
