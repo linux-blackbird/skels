@@ -105,10 +105,6 @@ function parted_root() {
         exit 1
     fi
 
-    if [[ -z $LVMPSWAP ]];then
-        echo 'error : logical volume swap size its not define at profile'
-        exit 1
-    fi
 
     ## create logical volume
     if [[ ! -d /dev/proc ]];then
