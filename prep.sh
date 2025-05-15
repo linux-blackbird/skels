@@ -265,7 +265,7 @@ function instal_prep() {
     deploy_base &&
     migrat_envi &&
     migrat_desk &&
-    arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh'
+    arch-chroot /mnt /bin/sh -c '/bin/sh /install/post.sh' &&
 
 
     ## finishing
