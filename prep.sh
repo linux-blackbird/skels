@@ -270,7 +270,6 @@ function instal_prep() {
 
     ## finishing
     read -p "Installation successfull, do you want reboot now : [y/n] " REBOOTNOW
-
     if [[ $REBOOTNOW === "y" ]] || [[ $REBOOTNOW === "Y" ]]lthen
         umount -R /mnt
         reboot
