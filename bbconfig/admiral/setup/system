@@ -227,10 +227,10 @@ systemctl enable systemd-networkd.socket
 systemctl enable systemd-resolved
 
 if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
-    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
-    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
-    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
-    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+    sed -i '8/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
+    sed -i '9/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+    sed -i '10/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+    sed -i '11/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
 fi
 
 

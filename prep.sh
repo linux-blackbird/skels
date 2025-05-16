@@ -336,7 +336,7 @@ function deploy_base() {
    
 
     ## migrate protocol configuration
-    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
+    cp -fr /root/conf/bbconfig/$PROTOCOL/* /mnt/install
 
 
     ## protocol installation script
