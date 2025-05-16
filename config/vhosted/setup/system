@@ -147,7 +147,6 @@ function basic_optima() {
 
 function basic_vhosts() {
 
-    ## vhost config
     systemctl enable libvirtd.socket
     usermod -a -G libvirt lektor
 }
@@ -223,7 +222,7 @@ function policy_sysfs() {
 
 
     ## enable tmpfs 
-    systemctl enabled tmp.mount
+    systemctl enable tmp.mount
 
     ## maksing nfs server
     systemctl mask nfs-server.service
