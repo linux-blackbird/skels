@@ -13,7 +13,7 @@ echo $HOSTNAME > /etc/hostname
 
 
 ## create zoneinfo
-ln -sf /etc/share/zoneinfo/$TIMEZONE /etc/localtime
+ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
 
 
@@ -21,7 +21,7 @@ hwclock --systohc
 ## config locales
 printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
 locale-gen && locale > /etc/locale.conf
-sed -i '1s/.*/'$LOCALESC'/' /etc/locale.conf
+sed -i '1s/.*/LANG='$LOCALESC'/' /etc/locale.conf
 
 
 
