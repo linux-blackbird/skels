@@ -117,25 +117,25 @@ function parted_root() {
         vgcreate proc /dev/mapper/lvm_root
     fi
 
-    if [[ ! -e /dev/proc/root  ]];then
-        yes | lvcreate -L $LVMPROOT proc -n root &&
+    if [[ ! -e /dev/proc/root ]];then
+        yes | lvcreate -L $LVMPROOT proc -n root
     fi
 
     if [[ ! -e /dev/proc/vars ]];then
-        yes | lvcreate -L $LVMPVARS proc -n vars &&
+        yes | lvcreate -L $LVMPVARS proc -n vars
     fi
 
     if [[ ! -e /dev/proc/vtmp ]];then
-        yes | lvcreate -L $LVMPVTMP proc -n vtmp &&
+        yes | lvcreate -L $LVMPVTMP proc -n vtmp
     fi
 
     if [[ ! -e /dev/proc/vlog ]];then
-        yes | lvcreate -L $LVMPVTMP proc -n vlog &&
+        yes | lvcreate -L $LVMPVTMP proc -n vlog
         sleep 1
     fi 
 
     if [[ ! -e /dev/proc/vaud ]];then
-        yes | lvcreate -L $LVMPVAUD proc -n vaud &&
+        yes | lvcreate -L $LVMPVAUD proc -n vaud
         sleep 1
     fi
 
