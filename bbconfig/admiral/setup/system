@@ -33,6 +33,14 @@ function basic_config() {
 
 
 function basic_skeles() {
+
+    # icons
+    # sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
+
+    # themes
+    #sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
+
+
     ## generate skeles
 
 }
@@ -189,14 +197,6 @@ function basic_dekstp() {
     echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
     sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-
-
-    # icons
-
-
-
-    # themes
-    sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
 
 
     ## flatpak theme
