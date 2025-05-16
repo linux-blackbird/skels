@@ -6,13 +6,13 @@ KEYSSIZE="-L 580M"
 ROOTSIZE="-L G"
 DATASIZE="100%FREE"
 
-LVMPROOT="20G"
+LVMPROOT="10G"
 LVMPVARS="5G"
-LVMPVTMP="2M"
+LVMPVTMP="5G"
 LVMPVLOG="5G"
 LVMPVAUD="2G"
 
-LVMDHOME="10G"
+LVMDHOME="2G"
 LVMDHOST="100%FREE"
 
 PACKBASE="linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 base base-devel neovim git openssh polkit less firewalld tang apparmor libpwquality rsync qemu-base libvirt openbsd-netcat reflector nftables tuned tuned-ppd irqbalance"
