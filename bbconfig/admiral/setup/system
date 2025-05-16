@@ -6,242 +6,294 @@ source /setup/setupenvi
 cat /setup/setupenvi
 
 
+function basic_config() {
 
-## create hostname
-echo $HOSTNAME > /etc/hostname
+    ## create hostname
+    echo $HOSTNAME > /etc/hostname
 
+    
+    ## create zoneinfo
+    ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+    hwclock --systohc 
+    timedatectl set-ntp true
+    echo 'zone info is configured'
 
+    
+    ## config locales
+    printf "$LOCALES1\n$LOCALES2" >> /etc/locale.gen
+    locale-gen && locale > /etc/locale.conf
+    sed -i '1s/.*/LANG='$LOCALESC'/' /etc/locale.conf
+    echo 'locales is configured'
 
-## create zoneinfo
-ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-hwclock --systohc
 
+    ## editor environment
+    echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+    echo 'environtment is configured'
+}
 
 
-## config locales
-printf "$LOCALES1\n $LOCALES2" >> /etc/locale.gen
-locale-gen && locale > /etc/locale.conf
-sed -i '1s/.*/LANG='$LOCALESC'/' /etc/locale.conf
+function basic_skeles() {
+    ## generate skeles
 
+}
 
-## generate skeles
 
+function basic_appnav() {
+    ## generate appnva
+}
 
 
-## generate appnva
+function basic_regusr() {
 
+    #admin user
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+    useradd -m lektor && 
+    echo "lektor:1511" | chpasswd
+    usermod -a -G wheel lektor &&
+    mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
+    chown -R lektor:lektor /home/lektor/*
+    echo 'lektor user created'
 
 
-## editor environment
-echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+    ## share user
+    mkdir /tmp/share &&
+    useradd -d /tmp/share share && 
+    echo '1511' | passwd --stdin share
+    chown -R share:share /tmp/share
+    echo 'share user created'
 
 
+    ## linux  user
+    useradd -m $MAKEUSER
+    echo '1511' | passwd $MAKEUSER --stdin 
+    mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,template,video}
+    chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/*
+    usermod -aG share $MAKEUSER &&
+    setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
+    echo 'custom user created'
 
-#admin user
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-useradd -m lektor && 
-echo "lektor:1511" | chpasswd
-usermod -a -G wheel lektor &&
-mkdir /home/lektor/{dekstop,download,image,audio,project,share,template,video}
-chown -R lektor:lektor /home/lektor/*
-echo 'lektor user created'
 
+    ## lock root  user
+    passwd -l root
+    echo 'root account is locked'
+}
 
 
-## share user
-mkdir /tmp/share &&
-useradd -d /tmp/share share && 
-echo '1511' | passwd --stdin share
-chown -R share:share /tmp/share
-echo 'share user created'
+function basic_ethers() {
 
+    ## networking
+    ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+    systemctl enable systemd-networkd.socket
+    systemctl enable systemd-resolved
 
+    if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
+        sed -i '8/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
+        sed -i '9/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+        sed -i '10/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+        sed -i '11/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+    fi
+}
 
-## linux  user
-useradd -m $MAKEUSER
-echo '1511' | passwd $MAKEUSER --stdin 
-mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,template,video}
-chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/*
-usermod -aG share $MAKEUSER &&
-setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
-echo 'custom user created'
 
+function basic_aurpac() {
+    
+    # yay install
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
+    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
+}
 
-## lock root  user
-passwd -l root
-echo 'root account is locked'
 
+function basis_kernel() {
+    ## kernel config   
+    echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+    echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
+    echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
+}
 
 
-## kernel config   
-echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
-echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
-  
+function basis_iramfs() {
 
+    ## initram config 
+    mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
+    rm /boot/initramfs-*
+    bootctl --path=/boot/ install
+    touch /etc/vconsole.conf
+}
 
-## initram config 
-mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
-rm /boot/initramfs-*
-bootctl --path=/boot/ install
-touch /etc/vconsole.conf
 
+function basic_secure() {
+    ## firewalld config
+    systemctl enable firewalld
 
+    ## tangserver config
+    systemctl enable tangd.socket
 
-# yay install
-echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
-sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/yay /tmp/yay' > /dev/null
-sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 
+    ## apparmor config
+    echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
+    systemctl enable apparmor.service
+}
 
-# aide file integrity
-gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
 
+function basic_mitiga() {
 
-# aur package
-echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
-sudo -H -u lektor bash -c 'yay -S hyprshot visual-studio-code-bin google-chrome aide '$AURSVARS' --noconfirm && yay -Yc' > /dev/null
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+    ## netboot config
+    curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
+    mv -f recovery.efi /boot/efi/rescue/
 
+    ## rsync config
 
-## hyprland
-systemctl --global enable hyprpolkitagent
-systemctl --global enable hypridle.service
-systemctl --global enable waybar
-sudo git clone https://github.com/linux-blackbird/wall  /tmp/wall
-rm /usr/share/hypr/wall0.png
-rm /usr/share/hypr/wall1.png
-rm /usr/share/hypr/wall3.png
-cp /tmp/wall/darker.png /usr/share/hypr/wall0.png
-cp /tmp/wall/darker.png /usr/share/hypr/wall2.png
-cp /tmp/wall/darker.png /usr/share/hypr/wall3.png
+    ## systemd journal remote config
 
 
+    # aide file integrity
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
+    sudo -H -u lektor bash -c 'yay -S aide  --noconfirm && yay -Yc' > /dev/null
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+}
 
-# sddm
-sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
-sudo systemctl enable sddm
 
+function basic_optima() {
 
+    ## reflector config
+    cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
-# icon
-sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
+    ## tunned config
+    systemctl enable tuned-ppd
 
+    ## irg balanace config
+    systemctl enable irqbalance.service
+}
 
 
-# flatpak
-sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
-sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
-flatpak override --env=GTK_THEME=blackbird
-flatpak override --env=ICON_THEME=Papirus-Dark
+function basic_dekstp() {
 
+    ## hyprland
+    systemctl --global enable hyprpolkitagent
+    systemctl --global enable hypridle.service
+    systemctl --global enable waybar
+    sudo git clone https://github.com/linux-blackbird/wall  /tmp/wall
+    rm /usr/share/hypr/wall0.png
+    rm /usr/share/hypr/wall1.png
+    rm /usr/share/hypr/wall3.png
+    cp /tmp/wall/darker.png /usr/share/hypr/wall0.png
+    cp /tmp/wall/darker.png /usr/share/hypr/wall2.png
+    cp /tmp/wall/darker.png /usr/share/hypr/wall3.png
 
+    # aur package
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    sudo -H -u lektor bash -c 'yay -S hyprshot --noconfirm && yay -Yc' > /dev/null
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
-# firefox
-flatpak install --system --noninteractive org.mozilla.firefox &&
 
+    # icons
 
 
-# vscode
-chown root:root /opt/visual-studio-code/chrome-sandbox &&
-chmod 4775 /opt/visual-studio-code/chrome-sandbox
 
+    # themes
+    sudo git clone https://github.com/linux-blackbird/themes /usr/share/themes/blackbird
 
 
-## firewalld config
-systemctl enable firewalld
+    ## flatpak theme
+    flatpak override --env=GTK_THEME=blackbird
+    flatpak override --env=ICON_THEME=Papirus-Dark
 
 
+    ## gnome keyring
+    mkdir /home/lektor/.gnupg
+    echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
 
-## tangserver config
-systemctl enable tangd.socket
+    chown -R lektor:lektor /home/lektor/.gnupg
+    chmod 700 /home/lektor/.gnupg
+    chmod 600 /home/lektor/.gnupg/*
+    chmod 700 /home/lektor/.gnupg/*.d
 
+    chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/.gnupg
+    chmod 700 /home/$MAKEUSER/.gnupg
+    chmod 600 /home/$MAKEUSER/.gnupg/*
+    chmod 700 /home/$MAKEUSER/.gnupg/*.d
 
+    sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
+    echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
+    
+    
+    systemctl --global enable gnome-keyring-daemon.socket
+    systemctl --global enable gcr-ssh-agent.socket
 
-## apparmor config
-echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >> /etc/cmdline.d/03-secs.conf
-systemctl enable apparmor.service
 
+    # sddm
+    sudo git clone https://github.com/linux-blackbird/login  /usr/share/sddm/themes/login
+    sudo systemctl enable sddm
+}
 
 
-## gnome keyring
-mkdir /home/lektor/.gnupg
-echo "pinentry-program /usr/bin/pinentry-gnome3" > /home/lektor/.gnupg/gpg-agent.conf
+function basic_market() {
 
-chown -R lektor:lektor /home/lektor/.gnupg
-chmod 700 /home/lektor/.gnupg
-chmod 600 /home/lektor/.gnupg/*
-chmod 700 /home/lektor/.gnupg/*.d
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    sudo -H -u lektor bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo' 
+    sudo -H -u $MAKEUSER bash -c 'flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo'
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
-chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/.gnupg
-chmod 700 /home/$MAKEUSER/.gnupg
-chmod 600 /home/$MAKEUSER/.gnupg/*
-chmod 700 /home/$MAKEUSER/.gnupg/*.d
 
-sudo ln -s /usr/lib/seahorse/ssh-askpass /usr/lib/ssh/ssh-askpass
-echo "Path askpass /usr/lib/seahorse/ssh-askpass" >> /etc/sudo.conf
-systemctl --global enable gnome-keyring-daemon.socket
-systemctl --global enable gcr-ssh-agent.socket
+}
 
 
+function basic_devels() {
 
+    # aur package
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    sudo -H -u lektor bash -c 'yay -S visual-studio-code-bin --noconfirm && yay -Yc' > /dev/null
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
-## netboot config
-curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
-mv -f recovery.efi /boot/efi/rescue/
+    chown root:root /opt/visual-studio-code/chrome-sandbox &&
+    chmod 4775 /opt/visual-studio-code/chrome-sandbox
 
+}
 
 
-## vhost config
-systemctl enable libvirtd.socket
-usermod -aG libvirt lektor
-usermod -aG libvirt $MAKEUSER
+function basic_browse() {
 
+    ## google chorome
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    sudo -H -u lektor bash -c 'yay -S google-chrome aide --noconfirm && yay -Yc' > /dev/null
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
 
-## podman config
-chmod 4755 /opt/podman-desktop/chrome-sandbox 
-chown -R root:root /opt/podman-desktop/chrome-sandbox
-echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/10-userspace-registries.conf 
+    # firefox
+    flatpak install --system --noninteractive org.mozilla.firefox
+}
 
 
+function variant_pack() {
 
-## reflector config
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
+    # aur package
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    if [[ ! -z $AURSVARS ]];then
+        sudo -H -u lektor bash -c 'yay -S '$AURSVARS' --noconfirm && yay -Yc' > /dev/null
+    fi
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+}
 
 
+function basic_vhosts() {
+    ## vhost config
+    systemctl enable libvirtd.socket
+    usermod -aG libvirt lektor
+    usermod -aG libvirt $MAKEUSER
+}
 
-## tunned config
-systemctl enable tuned-ppd
 
-
-
-## irg balanace config
-systemctl enable irqbalance.service
-
-
-## networking
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-systemctl enable systemd-networkd.socket
-systemctl enable systemd-resolved
-
-if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
-    sed -i '8/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
-    sed -i '9/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
-    sed -i '10/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
-    sed -i '11/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
-fi
-
-
-
-## aide init
-aide --init
-
-
-## membalikan akses
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/
-
+function basic_podman() {
+    ## podman config
+    chmod 4755 /opt/podman-desktop/chrome-sandbox 
+    chown -R root:root /opt/podman-desktop/chrome-sandbox
+    echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/10-userspace-registries.conf 
+   
+}
 
 
 function policy_files() {
@@ -314,7 +366,7 @@ function policy_sysfs() {
 
 
     ## enable tmpfs 
-    systemctl enabled tmp.mount
+    systemctl enable tmp.mount
 
     ## maksing nfs server
     systemctl mask nfs-server.service
@@ -334,6 +386,26 @@ function policy_sysnt() {
 
 }
 
+
+## main load chain
+basic_config &&
+basic_skeles &&
+basic_appnav &&
+basic_regusr &&
+basic_ethers &&
+basic_aurpac &&
+basis_kernel &&
+basis_iramfs &&
+basic_secure &&
+basic_mitiga &&
+basic_optima &&
+basic_dekstp &&
+basic_market &&
+basic_devels &&
+basic_browse &&
+variant_pack &&
+basic_vhosts &&
+basic_podman &&
 policy_files && 
 policy_sysfs &&
 policy_sysnt &&

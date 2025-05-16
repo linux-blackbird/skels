@@ -221,6 +221,7 @@ function policy_sysfs() {
     ## enable tmpfs 
     systemctl enable tmp.mount
 
+
     ## maksing nfs server
     systemctl mask nfs-server.service
 }
@@ -236,7 +237,6 @@ function policy_sysnt() {
 
      ## disable sctp net module from kernel
     modprobe -r sctp 2>/dev/null; rmmod sctp 2>/dev/null
-
 }
 
 
