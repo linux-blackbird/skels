@@ -331,28 +331,28 @@ function policy_files() {
 function policy_sysfs() {
 
     ## disable hfs file system module from kernel 
-    modprobe -r hfs 2>/dev/null
-    rmmod hfs 2>/dev/null 
+    modprobe -r hfs 2> /dev/null
+    rmmod hfs 2> /dev/null 
 
 
     ## disable hfsplus file system module from kernel
-    modprobe -r hfsplus 2>/dev/null
-    rmmod hfsplus 2>/dev/null
+    modprobe -r hfsplus 2> /dev/null
+    rmmod hfsplus 2> /dev/null
 
 
     ## disable jffs2 file system module from kernel
-    modprobe -r jffs2 2>/dev/null
-    rmmod jffs2 2>/dev/null
+    modprobe -r jffs2 2> /dev/null
+    rmmod jffs2 2> /dev/null
 
     
     ## disable squashfs file system module from kernel
-    modprobe -r squashfs 2>/dev/null
-    rmmod squashfs 2>/dev/null
+    modprobe -r squashfs 2> /dev/null
+    rmmod squashfs 2> /dev/null
 
 
     ## disable udf file system module from kernel
-    modprobe -r udf 2>/dev/null
-    rmmod udf 2>/dev/null
+    modprobe -r udf 2> /dev/null
+    rmmod udf 2> /dev/null
 
 
     ## disable usb-storage file system module from kernel
@@ -360,23 +360,23 @@ function policy_sysfs() {
 
 
     ## disable 9p file system module from kernel
-    modprobe -r 9p 2>/dev/null
-    rmmod 9p 2>/dev/null
+    modprobe -r 9p 2> /dev/null
+    rmmod 9p 2> /dev/null
 
 
     ## disable affs file system module from kernel
     modprobe -r affs 2>/dev/null
-    rmmod affs 2>/dev/null
+    rmmod affs 2> /dev/null
 
 
     ## disable afs file system module from kernel
     modprobe -r afs 2>/dev/null
-    rmmod afs 2>/dev/null
+    rmmod afs 2> /dev/null
 
 
     ## disable fuse file system module from kernel
     modprobe -r fuse 2>/dev/null
-    rmmod fuse 2>/dev/null
+    rmmod fuse 2> /dev/null
 
 
     ## enable tmpfs 
