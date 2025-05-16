@@ -153,7 +153,7 @@ function basic_vhosts() {
 }
 
 
-function polocy_fileer() {
+function policy_files() {
 
     chown root:root /etc/crontab
     chmod og-rwx /etc/crontab
@@ -179,7 +179,8 @@ function polocy_fileer() {
     chmod og-rwx /etc/cron.d
 }
 
-function policy_sysfil() {
+
+function policy_sysfs() {
 
     ## disable hfs file system module from kernel 
     modprobe -r hfs 2>/dev/null; rmmod hfs 2>/dev/null 
@@ -229,7 +230,7 @@ function policy_sysfil() {
 }
 
 
-function policy_netfil() {
+function policy_sysnt() {
 
     ## disable dccp net module from kernel
     modprobe -r dccp 2>/dev/null; rmmod dccp 2>/dev/null
@@ -254,7 +255,9 @@ basic_secure &&
 basic_mitiga &&
 basic_optima &&
 basic_vhosts &&
-
+policy_files && 
+policy_sysfs &&
+policy_sysnt &&
 
 
 ## generate efi
