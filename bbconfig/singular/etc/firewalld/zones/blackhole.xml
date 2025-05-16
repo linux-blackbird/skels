@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <zone target="DROP">
-    <description>Blackhive firewall secure zone. Blackbird security zone. You do not trust the other
+    <description>Blackhole firewall secure zone. Blackbird security zone. You do not trust the other
     computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
     <service name="ssh"/>
     <service name="dhcpv6-client"/>
