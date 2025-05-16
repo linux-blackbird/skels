@@ -350,7 +350,7 @@ parted_data &&
 format_disk &&
 mounts_disk &&
 deploy_base &&
-umount -R /mnt/install &&
+umount -R /mnt/install
 reboot
 
 
