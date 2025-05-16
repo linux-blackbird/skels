@@ -84,7 +84,6 @@ function basic_ethers() {
     ## networking
     # ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
-
     if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
         sed -i '8s/.*/DHPC=yes/' /etc/systemd/network/30-bridge.network
         sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
