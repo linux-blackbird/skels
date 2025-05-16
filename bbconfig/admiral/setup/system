@@ -83,8 +83,7 @@ function basic_ethers() {
 
     ## networking
     # ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-    systemctl enable systemd-networkd.socket
-    systemctl enable systemd-resolved
+
 
     if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
         sed -i '8s/.*/DHPC=yes/' /etc/systemd/network/30-bridge.network
@@ -92,6 +91,9 @@ function basic_ethers() {
         sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
         sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
     fi
+
+    systemctl enable systemd-networkd.socket
+    systemctl enable systemd-resolved
 }
 
 
