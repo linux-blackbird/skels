@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-
-
 ## generate source
 source /setup/setupenvi
 echo 'export is configured'
@@ -243,7 +241,6 @@ function policy_sysnt() {
 
 
 ## proc chainloader
-
 basic_config &&
 basic_regusr &&
 basic_ethers &&
