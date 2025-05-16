@@ -3,7 +3,7 @@
 
 ## generate source
 source /setup/setupenvi
-cat /setup/setupenvi
+
 
 
 function basic_config() {
@@ -42,12 +42,15 @@ function basic_skeles() {
 
 
     ## generate skeles
+    echo 'basic skeles'
 
 }
 
 
 function basic_appnav() {
     ## generate appnva
+
+    echo 'basic skeles'
 }
 
 
@@ -92,12 +95,12 @@ function basic_ethers() {
     ## networking
     # ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
-    if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
-        sed -i '8s/.*/DHPC=yes/' /etc/systemd/network/30-bridge.network
-        sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
-        sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
-        sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
-    fi
+    #if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
+    #    sed -i '8s/.*/DHPC=yes/' /etc/systemd/network/30-bridge.network
+    #    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+    #    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+    #    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+    #fi
 
     systemctl enable systemd-networkd.socket
     systemctl enable systemd-resolved
@@ -324,26 +327,32 @@ function policy_files() {
 }
 
 
+
 function policy_sysfs() {
 
     ## disable hfs file system module from kernel 
-    modprobe -r hfs 2>/dev/null; rmmod hfs 2>/dev/null 
+    modprobe -r hfs 2>/dev/null
+    rmmod hfs 2>/dev/null 
 
 
     ## disable hfsplus file system module from kernel
-    modprobe -r hfsplus 2>/dev/null; rmmod hfsplus 2>/dev/null
+    modprobe -r hfsplus 2>/dev/null
+    rmmod hfsplus 2>/dev/null
 
 
     ## disable jffs2 file system module from kernel
-    modprobe -r jffs2 2>/dev/null; rmmod jffs2 2>/dev/null
+    modprobe -r jffs2 2>/dev/null
+    rmmod jffs2 2>/dev/null
 
     
     ## disable squashfs file system module from kernel
-    modprobe -r squashfs 2>/dev/null; rmmod squashfs 2>/dev/null
+    modprobe -r squashfs 2>/dev/null
+    rmmod squashfs 2>/dev/null
 
 
     ## disable udf file system module from kernel
-    modprobe -r udf 2>/dev/null; rmmod udf 2>/dev/null
+    modprobe -r udf 2>/dev/null
+    rmmod udf 2>/dev/null
 
 
     ## disable usb-storage file system module from kernel
@@ -351,19 +360,23 @@ function policy_sysfs() {
 
 
     ## disable 9p file system module from kernel
-    modprobe -r 9p 2>/dev/null; rmmod 9p 2>/dev/null
+    modprobe -r 9p 2>/dev/null
+    rmmod 9p 2>/dev/null
 
 
     ## disable affs file system module from kernel
-    modprobe -r affs 2>/dev/null; rmmod affs 2>/dev/null
+    modprobe -r affs 2>/dev/null
+    rmmod affs 2>/dev/null
 
 
     ## disable afs file system module from kernel
-    modprobe -r afs 2>/dev/null; rmmod afs 2>/dev/null
+    modprobe -r afs 2>/dev/null
+    rmmod afs 2>/dev/null
 
 
     ## disable fuse file system module from kernel
-    modprobe -r fuse 2>/dev/null; rmmod fuse 2>/dev/null
+    modprobe -r fuse 2>/dev/null
+    rmmod fuse 2>/dev/null
 
 
     ## enable tmpfs 
