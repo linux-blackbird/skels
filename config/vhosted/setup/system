@@ -50,21 +50,21 @@ echo 'lektor user created'
 
 ## lock root  user
 passwd -l root
-echo "1511" | passwd --stdin &&
-sleep 5
+echo 'root locked'
 
 
 
 ## networking
-#ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-#sleep 5
+rm /etc/resolv.conf
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
-#if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
-#    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
-#    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
-#    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
-#    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
-#fi
+
+if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
+    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
+    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+fi
 
 systemctl enable systemd-networkd.socket
 systemctl enable systemd-resolved
