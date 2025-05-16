@@ -252,17 +252,17 @@ function policy_sysfs() {
 
 
     ## disable affs file system module from kernel
-    modprobe -r affs 2>/dev/null
+    modprobe -r affs 2> /dev/null
     rmmod affs 2> /dev/null
 
 
     ## disable afs file system module from kernel
-    modprobe -r afs 2>/dev/null
+    modprobe -r afs 2> /dev/null
     rmmod afs 2> /dev/null
 
 
     ## disable fuse file system module from kernel
-    modprobe -r fuse 2>/dev/null
+    modprobe -r fuse 2> /dev/null
     rmmod fuse 2> /dev/null
 
 
