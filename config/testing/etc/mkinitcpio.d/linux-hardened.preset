@@ -1,6 +1,0 @@
-# Blackbird linux preset
-
-ALL_config="/etc/mkinitcpio.d/blackbird.conf"
-ALL_kver="/boot/kernel/vmlinuz-linux-hardened"
-PRESETS=('default')
-default_uki="/boot/efi/linux/blackbird.efi"

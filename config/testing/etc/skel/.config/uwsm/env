@@ -1,4 +1,0 @@
-export XCURSOR_SIZE=22
-export HYPRCURSOR_SIZE=22
-export GTK_THEME=blackbird
-export MOZ_ENABLE_WAYLAND=1
