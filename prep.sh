@@ -27,8 +27,9 @@ fi
 
 ## load source
 source /root/conf/users/$USERNAME
+source /root/conf/package/$USERPACK
 source /root/conf/protocol/$PROTOCOL
-source /root/conf/userpack/$USERPACK
+
 
 
 ## begin operation
@@ -331,7 +332,7 @@ function deploy_base() {
     mkdir /mnt/install/setup
     cat /root/conf/users/$USERNAME > /mnt/install/setup/setupenvi
     cat /root/conf/protocol/$PROTOCOL >> /mnt/install/setup/setupenvi
-    cat /root/conf/userpack/$USERPACK >> /mnt/install/setup/setupenvi
+    cat /root/conf/package/$USERPACK >> /mnt/install/setup/setupenvi
    
 
     ## migrate protocol configuration
