@@ -146,7 +146,6 @@ function basic_optima() {
 
 
 function basic_vhosts() {
-
     systemctl enable libvirtd.socket
     usermod -a -G libvirt lektor
 }
