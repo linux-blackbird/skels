@@ -284,6 +284,7 @@ function policy_sysnt() {
     modprobe -r rds 2> /dev/null  
     rmmod rds 2> /dev/null
 
+
     ## disable sctp net module from kernel
     modprobe -r sctp 2> /dev/null
     rmmod sctp 2> /dev/null
