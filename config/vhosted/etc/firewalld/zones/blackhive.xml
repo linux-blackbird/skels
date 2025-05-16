@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone target="DROP">
+    <description>Blackhive firewall secure zone. implementation of CIS Linux Benchmark. You do not trust the other
+    computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+    <service name="ssh"/>
+    <service name="dhcpv6-client"/>
+    <icmp-block name="destination-unreachable"/>
+    <icmp-block name="packet-too-big"/>
+    <icmp-block name="time-exceeded"/>
+    <icmp-block name="parameter-problem"/>
+    <icmp-block name="neighbour-advertisement"/>
+    <icmp-block name="neighbour-solicitation"/>
+    <icmp-block name="router-advertisement"/>
+    <icmp-block name="router-solicitation"/>
+    <rule family="ipv4">
+        <source address="127.0.0.1"/>
+        <destination address="127.0.0.1" invert="True"/>
+        <drop/>
+    </rule>
+    <rule family="ipv6">
+        <source address="::1"/>
+        <destination address="::1" invert="True"/>
+        <drop/>
+    </rule>
+    <icmp-block-inversion/>
+</zone>

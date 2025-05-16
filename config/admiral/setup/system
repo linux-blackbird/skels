@@ -55,7 +55,7 @@ useradd -m $MAKEUSER
 echo '1511' | passwd $MAKEUSER --stdin 
 mkdir /home/$MAKEUSER/{dekstop,download,image,audio,project,share,template,video}
 chown -R $MAKEUSER:$MAKEUSER /home/$MAKEUSER/*
-usermod -a -G share $MAKEUSER &&
+usermod -aG share $MAKEUSER &&
 setfacl -Rm u:$MAKEUSER:rwx /var/lib/libvirt/images &&
 echo 'custom user created'
 
@@ -92,8 +92,9 @@ sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
 
 # aur package
-echo $PASSWORD | sudo -H -u lektor bash -c 'yay -S hyprshot visual-studio-code-bin google-chrome aide '$AURSVARS' --noconfirm && yay -Yc' > /dev/null
-
+echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+sudo -H -u lektor bash -c 'yay -S hyprshot visual-studio-code-bin google-chrome aide '$AURSVARS' --noconfirm && yay -Yc' > /dev/null
+echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
 
 ## hyprland

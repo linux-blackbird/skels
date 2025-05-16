@@ -1,5 +1,7 @@
 # /etc/profile
 
+## clear terminal
+
 # Append "$1" to $PATH when not already in.
 # This function API is accessible to scripts in /etc/profile.d
 append_path () {
@@ -55,24 +57,15 @@ unset TERMCAP
 unset MANPATH
 
 
-## sharing directory
-if [ ! -d /tmp/share ]; then
-	mkdir /tmp/share
-    chown share:share /tmp/share
-fi
-ln -sf /tmp/share $HOME/share
-
-
-## download directory
-if [ ! -d /tmp/download ]; then
-	mkdir /tmp/download
-fi
-ln -sf /tmp/download $HOME/download
-
-
-
 function update() {
     reflector --save /etc/pacman.d/mirrorlist --counrty Indonesia,Singapore --protocol https --latest 5 &&
-    pacman -Syu &&
+    pacman -Sy --needed archlinux-keyring && pacman -Su &&
     pacman -Scc
+}
+
+
+function install() {
+    reflector --save /etc/pacman.d/mirrorlist --counrty Indonesia,Singapore --protocol https --latest 5 &&
+    pacman -Sy --needed archlinux-keyring && pacman -Su &&
+    pacman -S $1
 }

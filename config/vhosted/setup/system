@@ -1,144 +1,259 @@
 #!/bin/bash
 
 
+
+
 ## generate source
 source /setup/setupenvi
-cat /setup/setupenvi
 echo 'export is configured'
 
 
-## create hostname
-echo $HOSTNAME > /etc/hostname
-echo 'hostname is configured'
+function basic_config() {
+
+    ## create hostname
+    echo $HOSTNAME > /etc/hostname
+    echo 'hostname is configured'
+
+    ## create zoneinfo
+    ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+    hwclock --systohc 
+    timedatectl set-ntp true
+    echo 'zone info is configured'
+
+    ## config locales
+    printf "$LOCALES1\n$LOCALES2" >> /etc/locale.gen
+    locale-gen && locale > /etc/locale.conf
+    sed -i '1s/.*/LANG='$LOCALESC'/' /etc/locale.conf
+    echo 'locales is configured'
+
+    ## editor environment
+    echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
+    echo 'environtment is configured'
+}
 
 
+function basic_regusr() {
 
-## create zoneinfo
-ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-hwclock --systohc
-echo 'zone info is configured'
+    #admin user
+    if [[  -d /home/lektor ]];then
+        useradd -d /home/lektor lektor
+    else
+        useradd -m lektor
+    fi
+    chown -R lektor:lektor /home/lektor
+    usermod -a -G wheel lektor
+    echo "lektor:1511" | chpasswd &&
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+    echo 'lektor user created'
 
-
-
-## config locales
-printf "$LOCALES1\n$LOCALES2" >> /etc/locale.gen
-locale-gen && locale > /etc/locale.conf
-sed -i '1s/.*/LANG='$LOCALESC'/' /etc/locale.conf
-echo 'locales is configured'
-
-
-
-## editor environment
-echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
-echo 'environtment is configured'
-
+    ## lock root user
+    passwd -l root
+    echo 'root locked'
+}
 
 
-#admin user
-if [[  -d /home/lektor ]];then
-    useradd -d /home/lektor lektor
-else
-    useradd -m lektor
-fi
-chown -R lektor:lektor /home/lektor
-usermod -a -G wheel lektor
-echo "lektor:1511" | chpasswd &&
-echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-echo 'lektor user created'
+function basic_ethers() {
+
+    ## networking
+    rm /etc/resolv.conf
+    ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 
+    if [[ ! -z $NETSIPV4 ]]&&[[ ! -z $NETSGATE ]];then
+        sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
+        sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
+        sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
+        sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
+    fi
 
-## lock root  user
-passwd -l root
-echo 'root locked'
-
-
-
-## networking
-rm /etc/resolv.conf
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-
-
-if [[ -z $NETSIPV4 ]]&&[[ -z $NETSGATE ]];then
-    sed -i '8s/.*/#DHPC=yes/' /etc/systemd/network/30-bridge.network
-    sed -i '9s/.*/Address='$NETSIPV4'/' /etc/systemd/network/30-bridge.network
-    sed -i '10s/.*/Address='$NETSGATE'/' /etc/systemd/network/30-bridge.network
-    sed -i '11s/.*/Address='$NETSDNSS'/' /etc/systemd/network/30-bridge.network
-fi
-
-systemctl enable systemd-networkd.socket
-systemctl enable systemd-resolved
-sleep 5
+    systemctl enable systemd-networkd.socket
+    systemctl enable systemd-resolved
+}
 
 
-
-## kernel config   
-echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
-echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
-echo 'kernel is configured'
-sleep 5
-
-
-## initram config 
-mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
-rm /boot/initramfs-*
-bootctl --path=/boot/ install
-touch /etc/vconsole.conf
-echo 'boot is configured'
-sleep 5
+function basic_kernel() {
+    ## kernel config   
+    echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+    echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
+    echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
+    echo 'kernel is configured'
+    sleep 5
+}
 
 
-# aide file integrity
-#echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
-#yes | gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
-#sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide'
-#sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm'
-#aide --init
-#echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
-#sleep 5
+function basic_iramfs() {
+    ## initram config 
+    mv /boot/intel-ucode.img /boot/vmlinuz-linux-hardened /boot/kernel
+    rm /boot/initramfs-*
+    bootctl --path=/boot/ install
+    touch /etc/vconsole.conf
+    echo 'boot is configured'
+    sleep 5
+}
 
 
-## systemd journal remote config
+function basic_secure() {
+
+    ## firewalld config
+    systemctl enable firewalld
 
 
-## firewalld config
-systemctl enable firewalld
+    ## tangserver config
+    systemctl enable tangd.socket
 
 
-## tangserver config
-systemctl enable tangd.socket
+    ## apparmor config
+    systemctl enable apparmor.service
+
+    # aide file integrity
+    echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
+    pacman-key --add /setup/aide-0.19.tar.gz.asc
+    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide'
+    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm'
+    aide --init
+    echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+}
 
 
-## apparmor config
-systemctl enable apparmor.service
+function basic_mitiga() {
+
+    ## netboot config
+    curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
+    mv -f recovery.efi /boot/efi/rescue/
+
+    ## rsync config
 
 
-
-## netboot config
-curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
-mv -f recovery.efi /boot/efi/rescue/
+    ## systemd journal remote config
+}
 
 
+function basic_optima() {
 
-## vhost config
-systemctl enable libvirtd.socket
-usermod -a -G libvirt lektor
-
-
-
-## reflector config
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
+    ## reflector config
+    cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
 
-
-## tunned config
-systemctl enable tuned-ppd
-
+    ## tunned config
+    systemctl enable tuned-ppd
 
 
-## irg balanace config
-systemctl enable irqbalance.service
+    ## irg balanace config
+    systemctl enable irqbalance.service
+    
+
+}
+
+
+function basic_vhosts() {
+
+    ## vhost config
+    systemctl enable libvirtd.socket
+    usermod -a -G libvirt lektor
+}
+
+
+function polocy_fileer() {
+
+    chown root:root /etc/crontab
+    chmod og-rwx /etc/crontab
+
+
+    chown root:root /etc/cron.hourly/
+    chmod og-rwx /etc/cron.hourly/
+
+
+    chown root:root /etc/cron.daily/
+    chmod og-rwx /etc/cron.daily/
+
+
+    chown root:root /etc/cron.weekly/
+    chmod og-rwx /etc/cron.weekly/
+
+
+    chown root:root /etc/cron.monthly/
+    chmod og-rwx /etc/cron.monthly/
+
+
+    chown root:root /etc/cron.d/
+    chmod og-rwx /etc/cron.d
+}
+
+function policy_sysfil() {
+
+    ## disable hfs file system module from kernel 
+    modprobe -r hfs 2>/dev/null; rmmod hfs 2>/dev/null 
+
+
+    ## disable hfsplus file system module from kernel
+    modprobe -r hfsplus 2>/dev/null; rmmod hfsplus 2>/dev/null
+
+
+    ## disable jffs2 file system module from kernel
+    modprobe -r jffs2 2>/dev/null; rmmod jffs2 2>/dev/null
+
+    
+    ## disable squashfs file system module from kernel
+    modprobe -r squashfs 2>/dev/null; rmmod squashfs 2>/dev/null
+
+
+    ## disable udf file system module from kernel
+    modprobe -r udf 2>/dev/null; rmmod udf 2>/dev/null
+
+
+    ## disable usb-storage file system module from kernel
+    ## modprobe -r usb-storage 2>/dev/null; rmmod usb-storage 2>/dev/null
+
+
+    ## disable 9p file system module from kernel
+    modprobe -r 9p 2>/dev/null; rmmod 9p 2>/dev/null
+
+
+    ## disable affs file system module from kernel
+    modprobe -r affs 2>/dev/null; rmmod affs 2>/dev/null
+
+
+    ## disable afs file system module from kernel
+    modprobe -r afs 2>/dev/null; rmmod afs 2>/dev/null
+
+
+    ## disable fuse file system module from kernel
+    modprobe -r fuse 2>/dev/null; rmmod fuse 2>/dev/null
+
+
+    ## enable tmpfs 
+    systemctl enabled tmp.mount
+
+    ## maksing nfs server
+    systemctl mask nfs-server.service
+}
+
+
+function policy_netfil() {
+
+    ## disable dccp net module from kernel
+    modprobe -r dccp 2>/dev/null; rmmod dccp 2>/dev/null
+
+    ## disable rds net module from kernel
+    modprobe -r rds 2>/dev/null; rmmod rds 2>/dev/null
+
+     ## disable sctp net module from kernel
+    modprobe -r sctp 2>/dev/null; rmmod sctp 2>/dev/null
+
+}
+
+
+## proc chainloader
+
+basic_config &&
+basic_regusr &&
+basic_ethers &&
+basic_kernel &&
+basic_iramfs &&
+basic_secure &&
+basic_mitiga &&
+basic_optima &&
+basic_vhosts &&
 
 
 

@@ -255,7 +255,7 @@ function mounts_disk() {
     ## vars mounting
     if [[ ! -d /mnt/install/var ]];then
         mkdir /mnt/install/var &&
-        mount /dev/proc/vars /mnt/install/var &&
+        mount -o defaults,rw,nosuid,nodev,noexec,relatime /dev/proc/vars /mnt/install/var &&
         echo 'mount vars'
         sleep 1
     fi
@@ -263,7 +263,7 @@ function mounts_disk() {
     ## vtmp mounting
     if [[ ! -d /mnt/install/var/tmp ]];then
         mkdir /mnt/install/var/tmp &&
-        mount /dev/proc/vtmp /mnt/install/var/tmp &&
+        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/proc/vtmp /mnt/install/var/tmp &&
         echo 'mount vtmp'
         sleep 1
     fi
@@ -271,7 +271,7 @@ function mounts_disk() {
     ## vlog mounting
     if [[ ! -d /mnt/install/var/log ]];then
         mkdir /mnt/install/var/log &&
-        mount /dev/proc/vlog /mnt/install/var/log &&
+        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/proc/vlog /mnt/install/var/log &&
         echo 'mount vlog'
         sleep 1
     fi
@@ -279,7 +279,7 @@ function mounts_disk() {
     ## vaud mounting
     if [[ ! -d /mnt/install/var/log/audit ]];then
         mkdir /mnt/install/var/log/audit &&
-        mount /dev/proc/vaud /mnt/install/var/log/audit &&
+        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/proc/vaud /mnt/install/var/log/audit &&
         echo 'mount vaud'
         sleep 1
     fi
@@ -287,14 +287,16 @@ function mounts_disk() {
     ## home mounting
     if [[ ! -d /mnt/install/home ]];then
         mkdir /mnt/install/home &&
-        mount /dev/data/home /mnt/install/home &&
+        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/data/home /mnt/install/home &&
         echo 'mount home'
         sleep 1
     fi
  
     ## pods mounting
+    mkdir /mnt/install/var/lib
+
     if [[ ! -d /mnt/install/var/lib/containers ]]&&[[ ! -z $LVMDPODS ]];then
-       mkdir /mnt/install/var/lib/containers &&
+        mkdir /mnt/install/var/lib/containers &&
         mount /dev/data/pods /mnt/install/var/lib/containers &&
         echo 'mount pods'
         sleep 1
@@ -302,7 +304,7 @@ function mounts_disk() {
 
     ## host mounting
     if [[ ! -d /mnt/install/var/lib/libvirt/images ]]&&[[ ! -z $LVMDHOST ]];then
-        mkdir /mnt/install/var/lib /mnt/install/var/lib/libvirt /mnt/install/var/lib/libvirt/images &&
+        mkdir /mnt/install/var/lib/libvirt /mnt/install/var/lib/libvirt/images &&
         mount /dev/data/host /mnt/install/var/lib/libvirt/images &&
         echo 'mount host'
         sleep 1
@@ -322,7 +324,12 @@ function deploy_base() {
     pacstrap /mnt/install/ $PACKBASE $PACKVARS
     genfstab -U /mnt/install/ > /mnt/install/etc/fstab 
     cp /etc/systemd/network/* /mnt/install/etc/systemd/network/
-    #echo "tmpfs   /tmp         tmpfs   rw,noexec,nodev,nosuid,size=2G          0  0" >> /mnt/install/etc/fstab
+
+    ## cis tmpfs rules
+    echo 'tmpfs     /tmp        tmpfs   defaults,rw,nosuid,nodev,noexec,relatime,size=1G    0 0' >> /mnt/install/etc/fstab
+    echo 'tmpfs     /dev/shm    tmpfs   defaults,rw,nosuid,nodev,noexec,relatime,size=1G    0 0' >> /mnt/install/etc/fstab
+
+
 
 
     ## prepare protocol env
@@ -346,8 +353,7 @@ parted_root &&
 parted_data && 
 format_disk &&
 mounts_disk &&
-deploy_base 
-rm -fr /mnt/install/setup &&
+deploy_base &&
 umount -R /mnt/install &&
 reboot
 
