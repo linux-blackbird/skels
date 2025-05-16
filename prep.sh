@@ -8,7 +8,7 @@ fi
 
 echo $1
 
-if [ ! -e /root/conf/users/$1 ];then
+if [ ! -e /conf/users/$1 ];then
     echo 'error : your account is suspended or never exist';
     exit 1;
 fi
@@ -26,9 +26,9 @@ fi
 
 
 ## load source
-source /root/conf/users/$USERNAME
-source /root/conf/protocol/$PROTOCOL
-source /root/conf/userpack/$USERPACK
+source /conf/users/$USERNAME
+source /conf/protocol/$PROTOCOL
+source /conf/userpack/$USERPACK
 
 
 ## begin operation
@@ -327,13 +327,13 @@ function deploy_base() {
 
     ## prepare protocol env
     mkdir /mnt/install/setup
-    cat /root/conf/users/$USERNAME > /mnt/install/setup/setupenvi
-    cat /root/conf/protocol/$PROTOCOL >> /mnt/install/setup/setupenvi
-    cat /root/conf/userpack/$USERPACK >> /mnt/install/setup/setupenvi
+    cat /conf/users/$USERNAME > /mnt/install/setup/setupenvi
+    cat /conf/protocol/$PROTOCOL >> /mnt/install/setup/setupenvi
+    cat /conf/userpack/$USERPACK >> /mnt/install/setup/setupenvi
    
 
     ## migrate protocol configuration
-    cp -fr /root/conf/config/$PROTOCOL/* /mnt/install
+    cp -fr /conf/config/$PROTOCOL/* /mnt/install
 
 
     ## protocol installation script
