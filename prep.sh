@@ -263,7 +263,7 @@ function mounts_disk() {
     ## vtmp mounting
     if [[ ! -d /mnt/install/var/tmp ]];then
         mkdir /mnt/install/var/tmp &&
-        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/proc/vtmp /mnt/install/var/tmp &&
+        mount -o rw,nosuid,nodev,noexec,relatime /dev/proc/vtmp /mnt/install/var/tmp &&
         echo 'mount vtmp'
         sleep 1
     fi
@@ -271,7 +271,7 @@ function mounts_disk() {
     ## vlog mounting
     if [[ ! -d /mnt/install/var/log ]];then
         mkdir /mnt/install/var/log &&
-        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/proc/vlog /mnt/install/var/log &&
+        mount -o rw,nosuid,nodev,noexec,relatime /dev/proc/vlog /mnt/install/var/log &&
         echo 'mount vlog'
         sleep 1
     fi
@@ -279,7 +279,7 @@ function mounts_disk() {
     ## vaud mounting
     if [[ ! -d /mnt/install/var/log/audit ]];then
         mkdir /mnt/install/var/log/audit &&
-        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/proc/vaud /mnt/install/var/log/audit &&
+        mount -o rw,nosuid,nodev,noexec,relatime /dev/proc/vaud /mnt/install/var/log/audit &&
         echo 'mount vaud'
         sleep 1
     fi
@@ -287,7 +287,7 @@ function mounts_disk() {
     ## home mounting
     if [[ ! -d /mnt/install/home ]];then
         mkdir /mnt/install/home &&
-        mount -o rw,nosuid,nodev,noexec,relatime,seclabel /dev/data/home /mnt/install/home &&
+        mount -o rw,nosuid,nodev,noexec,relatime /dev/data/home /mnt/install/home &&
         echo 'mount home'
         sleep 1
     fi
