@@ -24,6 +24,13 @@ locale-gen && locale > /etc/locale.conf
 sed -i '1s/.*/LANG='$LOCALESC'/' /etc/locale.conf
 
 
+## generate skeles
+
+
+
+## generate appnva
+
+
 
 ## editor environment
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
@@ -90,6 +97,7 @@ sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/yay --noconfirm' > /dev/null
 
 # aide file integrity
 gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
+
 
 # aur package
 echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
