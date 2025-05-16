@@ -219,7 +219,7 @@ function policy_sysfs() {
 
 
     ## enable tmpfs 
-    systemctl enable tmp.mount
+    #systemctl enable tmp.mount
 
 
     ## maksing nfs server
