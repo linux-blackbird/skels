@@ -258,7 +258,7 @@ firewall-cmd --zone=public --add-port=7500/tcp --permanent
 
 firewall-cmd --reload
 
-echo "ip=10.10.1.22::10.10.1.1:255.255.255.0::eth0:none nameserver=10.10.1.1" > /etc/cmdline.d/06-nets.conf
+echo "ip=10.10.1.23::10.10.1.1:255.255.255.0::eth0:none nameserver=10.10.1.1" > /etc/cmdline.d/06-nets.conf
 
 systemctl enable clevis-luks-askpass.path
 
