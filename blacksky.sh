@@ -137,11 +137,11 @@ passwd anthrax
 
 passwd -l root
 
-useradd -d /opt/var/lib/livirt/images joyboy
+useradd -d /opt/var/lib/livirt/images roger
 
-setfacl -Rm u:joyboy:rw /var/lib/libvirt/images
+setfacl -Rm u:roger:rw /var/lib/libvirt/images
 
-passwd joyboy
+passwd roger
 
 su anthrax
 
@@ -157,7 +157,7 @@ makepkg -sric --dir /tmp/aide --noconfirm
 
 exit
 
-usermod -a -G libvirt joyboy
+usermod -a -G libvirt roger
 
 usermod -a -G libvirt anthrax
 
