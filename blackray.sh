@@ -97,7 +97,7 @@ cp -fr conf/bbconfig/vhosted/* /mnt/
 
 arch-chroot /mnt
 
-echo blackray.srv > /etc/hostname
+echo blacksky > /etc/hostname
 
 ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
@@ -125,15 +125,15 @@ passwd lektor
 
 mkdir /opt/cockpit
 
-useradd -d /opt/cockpit anthrax
+useradd -d /opt/cockpit nepster
 
-usermod -a -G wheel anthrax
+usermod -a -G wheel nepster
 
-echo 'anthrax ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
+echo 'nepster ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 
-chown anthrax:anthrax /opt/cockpit
+chown nepster:nepster /opt/cockpit
 
-passwd anthrax
+passwd nepster
 
 passwd -l root
 
@@ -143,7 +143,7 @@ setfacl -Rm u:joyboy:rw /var/lib/libvirt/images
 
 passwd joyboy
 
-su anthrax
+su nepster
 
 git clone https://aur.archlinux.org/mkinitcpio-clevis-hook /tmp/clevis
 
@@ -159,7 +159,7 @@ exit
 
 usermod -a -G libvirt joyboy
 
-usermod -a -G libvirt anthrax
+usermod -a -G libvirt nepster
 
 
 ### TECHNICAL
