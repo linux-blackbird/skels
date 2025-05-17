@@ -16,7 +16,7 @@ function basic_config() {
     echo 'hostname is configured'
 
     ## create zoneinfo
-    ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+    ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
     hwclock --systohc 
     timedatectl set-ntp true
     echo 'zone info is configured'
@@ -84,8 +84,8 @@ function basic_kernel() {
     sleep 2
 
     ## kernel config   
-    echo "rd.luks.uuid=$(blkid -s UUID -o value $DISKROOT) root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
-    echo "data UUID=$(blkid -s UUID -o value $DISKDATA) none" >> /etc/crypttab
+    echo "cryptdevice=UUID=$(blkid -s UUID -o value /dev/nvme0n1p3):crypto root=/dev/proc/root" > /etc/cmdline.d/01-boot.conf
+    echo "data UUID=$(blkid -s UUID -o value /dev/nvme0n1p4) none" >> /etc/crypttab
     echo "intel_iommu=on i915.fastboot=1" >> /etc/cmdline.d/02-mods.conf
     echo 'kernel is configured'
     sleep 5
@@ -117,6 +117,9 @@ function basic_secure() {
     systemctl enable firewalld
 
 
+    systemctl enable sshd
+
+
     ## tangserver config
     systemctl enable tangd.socket
 
@@ -126,30 +129,12 @@ function basic_secure() {
 
     # aide file integrity
     echo 'lektor ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/00_lektor
-    pacman-key --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
-    sudo -H -u lektor bash -c 'git clone https://aur.archlinux.org/aide.git /tmp/aide'
-    sudo -H -u lektor bash -c 'makepkg -sric --dir /tmp/aide --noconfirm'
+    gpg --recv-keys 2BBBD30FAAB29B3253BCFBA6F6947DAB68E7B931
+    git clone https://aur.archlinux.org/aide.git /tmp/aide
+    makepkg -sric --dir /tmp/aide --noconfirm
     aide --init
     echo 'lektor ALL=(ALL:ALL) ALL' > /etc/sudoers.d/00_lektor
 }
-
-
-function basic_mitiga() {
-
-    echo 'basic_mitiga'
-    sleep 2
-
-
-    ## netboot config
-    curl --output recovery.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi
-    mv -f recovery.efi /boot/efi/rescue/
-
-    ## rsync config
-
-
-    ## systemd journal remote config
-}
-
 
 function basic_optima() {
 
@@ -226,7 +211,6 @@ function policy_sysfs() {
     ## disable squashfs file system module from kernel
     modprobe -r squashfs 2> /dev/null && rmmod squashfs 2> /dev/null
 
-
     ## disable udf file system module from kernel
     modprobe -r udf 2> /dev/null && rmmod udf 2> /dev/null
 
@@ -291,3 +275,6 @@ policy_sysfs &&
 policy_sysnt &&
 
 
+pacman -S luksmeta clevis mkinitcpio-nfs-utils
+
+yay -S mkinitcpio-clevis-hook
