@@ -262,4 +262,8 @@ echo "ip=10.10.1.22::10.10.1.1:255.255.255.0::eth0:none nameserver=10.10.1.1" > 
 
 systemctl enable clevis-luks-askpass.path
 
-pacman -S libpam-google-authenticator
+pacman -S libpam-google-authenticator qrencode
+
+su lektor
+
+
