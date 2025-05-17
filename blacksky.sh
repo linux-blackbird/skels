@@ -109,7 +109,7 @@ printf "en_US.UTF-8 UTF-8\nen_US ISO-8859-1" >> /etc/locale.gen
 
 locale-gen && locale > /etc/locale.conf
 
-sed -i '1s/.*/LANG=en_US.UTF-8'/' /etc/locale.conf
+sed -i '1s/.*/'LANG=en_US.UTF-8'/' /etc/locale.conf
 
 echo 'EDITOR="/usr/bin/nvim"' >> /etc/environment
 
@@ -251,3 +251,15 @@ exit
 umount -R /mnt
 
 reboot
+
+ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+firewall-cmd --zone=public --add-port=7500/tcp --permanent
+
+firewall-cmd --reload
+
+echo "ip=10.10.1.22::10.10.1.1:255.255.255.0::eth0:none nameserver=10.10.1.1" > /etc/cmdline.d/06-nets.conf
+
+systemctl enable clevis-luks-askpass.path
+
+pacman -S libpam-google-authenticator
