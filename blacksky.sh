@@ -139,7 +139,7 @@ passwd -l root
 
 useradd -d /opt/var/lib/livirt/images joyboy
 
-setfacl -Rm u:joyboy:rw /var/lib/livirt/images
+setfacl -Rm u:joyboy:rw /var/lib/libvirt/images
 
 passwd joyboy
 
