@@ -254,11 +254,23 @@ reboot
 
 ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
+systemctl restart systemd-networkd
+
+systemctl restart systemd-resolved
+
 firewall-cmd --zone=public --add-port=7500/tcp --permanent
 
 firewall-cmd --reload
 
 echo "ip=10.10.1.23::10.10.1.1:255.255.255.0::eth0:none nameserver=10.10.1.1" > /etc/cmdline.d/06-nets.conf
+
+clevis luks bind -d /dev/nvme0n1p3 tang '{"url":"http://10.10.1.2:7500"}'
+clevis luks bind -d /dev/nvme0n1p3 tang '{"url":"http://10.10.1.22:7500"}'
+clevis luks bind -d /dev/nvme0n1p4 tang '{"url":"http://10.10.1.2:7500"}'
+clevis luks bind -d /dev/nvme0n1p4 tang '{"url":"http://10.10.1.22:7500"}'
+
+clevis luks list -d /dev/nvme0n1p3 
+clevis luks list -d /dev/nvme0n1p4   
 
 systemctl enable clevis-luks-askpass.path
 
@@ -267,3 +279,4 @@ pacman -S libpam-google-authenticator qrencode
 su lektor
 
 
+google-authenticator
