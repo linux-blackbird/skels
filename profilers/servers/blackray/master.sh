@@ -187,11 +187,9 @@ systemctl enable firewalld
 
 systemctl enable sshd
 
-
 systemctl enable tangd.socket
 
 systemctl enable apparmor.service
-
 
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/backupmirror 
 
@@ -269,7 +267,6 @@ clevis luks bind -d /dev/nvme0n1p4 tang '{"url":"http://10.10.1.22:7500"}'
 
 clevis luks list -d /dev/nvme0n1p3 
 clevis luks list -d /dev/nvme0n1p4   
-
 
 systemctl enable clevis-luks-askpass.path
 
