@@ -221,9 +221,7 @@ modprobe -r jffs2 2> /dev/null && rmmod jffs2 2> /dev/null
 
 modprobe -r squashfs 2> /dev/null && rmmod squashfs 2> /dev/null
 
-
 modprobe -r udf 2> /dev/null && rmmod udf 2> /dev/null
-
 
 ## disable usb-storage file system module from kernel
 ## modprobe -r usb-storage 2>/dev/null; rmmod usb-storage 2>/dev/null
@@ -278,6 +276,5 @@ systemctl enable clevis-luks-askpass.path
 pacman -S libpam-google-authenticator qrencode
 
 su lektor
-
 
 google-authenticator
