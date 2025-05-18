@@ -254,6 +254,10 @@ reboot
 
 ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
+systemctl restart systemd-networkd
+
+systemctl restart systemd-resolved
+
 firewall-cmd --zone=public --add-port=7500/tcp --permanent
 
 firewall-cmd --reload
@@ -275,7 +279,5 @@ pacman -S libpam-google-authenticator qrencode
 
 su lektor
 
+
 google-authenticator
-
-
-
