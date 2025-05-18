@@ -15,3 +15,5 @@ LVMDHOME="10G"
 LVMDPODS="30G"
 LVMDHOST="100%FREE"
 PACKBASE="linux-hardened linux-firmware mkinitcpio intel-ucode xfsprogs lvm2 bubblewrap-suid base base-devel neovim git openssh polkit less uwsm hyprland hyprpolkitagent hypridle hyprlock xdg-desktop-portal-hyprland pipewire pipewire-pulse pipewire-jack wireplumber pavucontrol kitty qt5-wayland qt6-wayland ttf-jetbrains-mono-nerd ttf-droid btop nautilus nautilus-image-converter seahorse-nautilus sushi mako waybar wofi evolution gnome-calendar wl-clipboard cliphist mailcap sddm  papirus-icon-theme flatpak gnome-software mpd mpc xfmpc hugo obsidian firewalld tang apparmor gnome-keyring libsecret seahorse keepassxc libpwquality rsync grsync qemu-desktop libvirt virt-manager openbsd-netcat podman crun fuse-overlayfs podman-desktop podman-docker podman-compose reflector tuned tuned-ppd irqbalance audacity"
+
+

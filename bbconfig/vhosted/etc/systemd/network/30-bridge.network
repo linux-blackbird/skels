@@ -2,6 +2,7 @@
 Name=bridge
 
 [Link]
+LinkPolicy=always-up
 RequiredForOnline=routable
 
 [Network]
