@@ -1,8 +1,0 @@
-
-DISKBOOT='/dev/nvme0n1p1'
-DISKVAUL='/dev/nvme0n1p2'
-DISKROOT='/dev/nvme0n1p3'
-DISKDATA='/dev/nvme0n1p4'
-
-
-PACKBASE="linux-hardened linux-firmware mkinitcpio intel-ucode lvm2 base base-devel neovim git openssh polkit less firewalld tang apparmor libpwquality rsync reflector nftables tuned tuned-ppd irqbalance" 

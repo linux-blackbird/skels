@@ -1,9 +1,13 @@
 ## ignore local config
+Code/
+containers/
+go/
 evolution/
 git/
+grsync/
 Code/
 dconf/
-go/
+PCSX2/
 gtk-4.0/
 Podman\ Desktop/
 google-chrome/
@@ -13,5 +17,7 @@ obsidian/
 pulse/
 xfce4/
 yay/
+mimeapps.list
+QtProject.conf
 pavucontrol.ini
 user-dirs.locale

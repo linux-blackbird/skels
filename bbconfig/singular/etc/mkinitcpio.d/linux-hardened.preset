@@ -1,6 +1,0 @@
-# Blackroz linux preset
-
-ALL_config="/etc/mkinitcpio.d/blackroz.conf"
-ALL_kver="/boot/kernel/vmlinuz-linux-hardened"
-PRESETS=('default')
-default_uki="/boot/efi/linux/blackroz.efi"

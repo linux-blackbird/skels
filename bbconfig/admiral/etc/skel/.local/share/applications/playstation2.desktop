@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Name=Playstation 2
-Icon=/home/null/.local/games/playstation2/logo.png
-Exec=/home/null/.local/games/playstation2/pcsx2
-Type=Application
-Terminal=false
-Keywords=Game;Emulators;
-
